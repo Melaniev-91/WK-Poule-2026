@@ -783,6 +783,7 @@ def get_poule_ranking(poule):
         reverse=True
     )
 
+
 fifa_ranking = {
     "Argentinië": 1,
     "Spanje": 2,
@@ -845,6 +846,7 @@ fifa_ranking = {
     "Curaçao": 59
 }
 
+
 def get_sorted_third_places(standen):
 
     third_places = []
@@ -876,24 +878,6 @@ def get_sorted_third_places(standen):
     )
 
     return third_places[:8]
-
-
-def pick_third_place_for_slot(allowed_groups, used):
-
-    pool = get_sorted_third_places(standen)
-
-    for p in pool:
-
-        if p["poule"] not in allowed_groups:
-            continue
-
-        if p["team"] in used:
-            continue
-
-        used.add(p["team"])
-        return p["team"]
-
-    return "TBD"
 
 
 # =====================================================================================
@@ -937,10 +921,68 @@ poule_map = {
 
 
 # =====================================================================================
+# BESTE NUMMERS 3 VERDELEN
+# =====================================================================================
+
+third_place_slots = {
+    "F":  ["A", "B", "C", "D", "F"],
+    "L":  ["C", "D", "F", "G", "H"],
+    "N":  ["C", "E", "F", "H", "I"],
+    "P":  ["E", "H", "I", "J", "K"],
+    "R":  ["A", "E", "H", "I", "J"],
+    "T":  ["B", "E", "F", "I", "J"],
+    "Z":  ["E", "F", "G", "I", "J"],
+    "AF": ["D", "E", "I", "J", "L"]
+}
+
+
+def build_third_place_assignment():
+
+    pool = get_sorted_third_places(standen)
+    slots = list(third_place_slots.keys())
+
+    def backtrack(slot_index, used_teams, assignment):
+
+        if slot_index == len(slots):
+            return assignment
+
+        slot = slots[slot_index]
+
+        for p in pool:
+
+            if p["poule"] not in third_place_slots[slot]:
+                continue
+
+            if p["team"] in used_teams:
+                continue
+
+            result = backtrack(
+                slot_index + 1,
+                used_teams | {p["team"]},
+                {**assignment, slot: p["team"]}
+            )
+
+            if result is not None:
+                return result
+
+        return None
+
+    result = backtrack(0, set(), {})
+
+    if result is None:
+        return {}
+
+    return result
+
+
+third_place_assignment = build_third_place_assignment()
+
+
+# =====================================================================================
 # RESOLVE TEAM
 # =====================================================================================
 
-def resolve_team(team_key, used_third_places):
+def resolve_team(team_key, used_third_places=None):
 
     rule = poule_map.get(team_key)
 
@@ -950,8 +992,7 @@ def resolve_team(team_key, used_third_places):
     poule, pos = rule
 
     if isinstance(poule, str) and poule.startswith("3:"):
-        groups = poule.replace("3:", "").split("/")
-        return pick_third_place_for_slot(groups, used_third_places)
+        return third_place_assignment.get(team_key, "TBD")
 
     if poule not in standen:
         return "TBD"
@@ -964,27 +1005,26 @@ def resolve_team(team_key, used_third_places):
     return ranking[pos - 1][0]
 
 
-used_third_places = set()
-
-
 # =====================================================================================
 # 16E FINALE TEAMS EENMALIG PER RERUN OPBOUWEN
 # =====================================================================================
 
 def build_round16_teams():
-    used_third_places = set()
+
     resolved = {}
 
     for team_key in poule_map.keys():
-        resolved[team_key] = resolve_team(
-            team_key,
-            used_third_places
-        )
+        resolved[team_key] = resolve_team(team_key)
 
     return resolved
 
 
 round16_teams = build_round16_teams()
+
+
+# =====================================================================================
+# KNOCK-OUT WINNAAR BEPALEN
+# =====================================================================================
 
 def get_knockout_winner(home_key, away_key, winner_key, home_team, away_team):
     home_score = st.session_state.get(home_key)
@@ -1001,6 +1041,7 @@ def get_knockout_winner(home_key, away_key, winner_key, home_team, away_team):
 
     return st.session_state.get(winner_key, "TBD")
 
+
 st.markdown("""
 <style>
 /* Radio tekst wit maken */
@@ -1012,6 +1053,7 @@ div[data-testid="stRadio"] span {
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 def toon_winnaar_bij_gelijk(match_id, home_team, away_team, home_key, away_key, winner_key):
     home_score = st.session_state.get(home_key)
@@ -1041,7 +1083,6 @@ def toon_winnaar_bij_gelijk(match_id, home_team, away_team, home_key, away_key, 
             horizontal=True,
             label_visibility="collapsed"
         )
-
 # =====================================================================================
 # UI 16e FINALE
 # =====================================================================================
