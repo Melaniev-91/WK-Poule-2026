@@ -16,12 +16,14 @@ from firebase_admin import credentials, firestore
 # Firebase database connectie maken
 # _______________________________________________________________________________________________________
 
-cred = credentials.Certificate("serviceAccountKey.json")
+firebase_config = dict(st.secrets["firebase"])
+
+cred = credentials.Certificate(firebase_config)
 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
-db = firestore.client()
+db = firestore.client())
 
 # _______________________________________________________________________________________________________
 # >>>>>>>>>>STREANMLIT: WK POULE APP BOUWEN<<<<<<<<<<
