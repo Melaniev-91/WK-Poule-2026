@@ -1991,6 +1991,19 @@ topscorer = st.text_input(
 # CONTROLEREN OF ALLES IS INGEVULD
 # =================================================================================
 
+def winnaar_bij_gelijk_ingevuld(home_key, away_key, winner_key):
+    home_score = st.session_state.get(home_key)
+    away_score = st.session_state.get(away_key)
+
+    if home_score is None or away_score is None:
+        return False
+
+    if home_score == away_score and not st.session_state.get(winner_key):
+        return False
+
+    return True
+
+
 def alles_ingevuld():
 
     # Poulefase
@@ -2007,45 +2020,55 @@ def alles_ingevuld():
     for i, match in enumerate(matches):
         match_id = match_number_map[i]
 
-        if st.session_state.get(f"{match_id}_home") is None:
-            return False
-        if st.session_state.get(f"{match_id}_away") is None:
+        if not winnaar_bij_gelijk_ingevuld(
+            f"{match_id}_home",
+            f"{match_id}_away",
+            f"r16_winner_{match_id}"
+        ):
             return False
 
     # 8e finale
     for match in eighth_matches:
         match_id = match[2]
 
-        if st.session_state.get(f"eighth_home_{match_id}") is None:
-            return False
-        if st.session_state.get(f"eighth_away_{match_id}") is None:
+        if not winnaar_bij_gelijk_ingevuld(
+            f"eighth_home_{match_id}",
+            f"eighth_away_{match_id}",
+            f"eighth_winner_{match_id}"
+        ):
             return False
 
     # Kwartfinale
     for match in quarter_matches:
         match_id = match[2]
 
-        if st.session_state.get(f"qf_home_{match_id}") is None:
-            return False
-        if st.session_state.get(f"qf_away_{match_id}") is None:
+        if not winnaar_bij_gelijk_ingevuld(
+            f"qf_home_{match_id}",
+            f"qf_away_{match_id}",
+            f"qf_winner_{match_id}"
+        ):
             return False
 
     # Halve finale
     for match in semi_matches:
         match_id = match[2]
 
-        if st.session_state.get(f"sf_home_{match_id}") is None:
-            return False
-        if st.session_state.get(f"sf_away_{match_id}") is None:
+        if not winnaar_bij_gelijk_ingevuld(
+            f"sf_home_{match_id}",
+            f"sf_away_{match_id}",
+            f"sf_winner_{match_id}"
+        ):
             return False
 
     # Finale
     for match in final_matches:
         match_id = match[2]
 
-        if st.session_state.get(f"final_home_{match_id}") is None:
-            return False
-        if st.session_state.get(f"final_away_{match_id}") is None:
+        if not winnaar_bij_gelijk_ingevuld(
+            f"final_home_{match_id}",
+            f"final_away_{match_id}",
+            f"final_winner_{match_id}"
+        ):
             return False
 
     # Bonusvragen
@@ -2062,6 +2085,129 @@ def alles_ingevuld():
         return False
 
     return True
+
+
+# =================================================================================
+# VOORSPELLINGEN VOOR PDF MAKEN
+# =================================================================================
+
+def maak_voorspellingen_pdf():
+
+    voorspellingen_pdf = []
+
+    # Poulefase
+    for poule in poules.values():
+        for wedstrijd in poule:
+            match_id = wedstrijd["match_id"]
+
+            voorspellingen_pdf.append({
+                "Fase": "Poule",
+                "home_team": wedstrijd["home_team"],
+                "away_team": wedstrijd["away_team"],
+                "home_score": st.session_state.get(f"{match_id}_home"),
+                "away_score": st.session_state.get(f"{match_id}_away")
+            })
+
+    # 16e finale
+    for i, match in enumerate(matches):
+        match_id = match_number_map[i]
+
+        voorspellingen_pdf.append({
+            "Fase": "16e Finale",
+            "home_team": round16_teams.get(match[0], "TBD"),
+            "away_team": round16_teams.get(match[1], "TBD"),
+            "home_score": st.session_state.get(f"{match_id}_home"),
+            "away_score": st.session_state.get(f"{match_id}_away"),
+            "winner": get_16e_winner(match_id)
+        })
+
+    # 8e finale
+    for match in eighth_matches:
+        match_id = match[2]
+
+        voorspellingen_pdf.append({
+            "Fase": "8e Finale",
+            "home_team": resolve_eighth_team(match[0]),
+            "away_team": resolve_eighth_team(match[1]),
+            "home_score": st.session_state.get(f"eighth_home_{match_id}"),
+            "away_score": st.session_state.get(f"eighth_away_{match_id}"),
+            "winner": get_eighth_winner(match_id)
+        })
+
+    # Kwartfinale
+    for match in quarter_matches:
+        match_id = match[2]
+
+        voorspellingen_pdf.append({
+            "Fase": "Kwartfinale",
+            "home_team": resolve_quarter_team(match[0]),
+            "away_team": resolve_quarter_team(match[1]),
+            "home_score": st.session_state.get(f"qf_home_{match_id}"),
+            "away_score": st.session_state.get(f"qf_away_{match_id}"),
+            "winner": get_quarter_winner(match_id)
+        })
+
+    # Halve finale
+    for match in semi_matches:
+        match_id = match[2]
+
+        voorspellingen_pdf.append({
+            "Fase": "Halve finale",
+            "home_team": resolve_semi_team(match[0]),
+            "away_team": resolve_semi_team(match[1]),
+            "home_score": st.session_state.get(f"sf_home_{match_id}"),
+            "away_score": st.session_state.get(f"sf_away_{match_id}"),
+            "winner": get_semi_winner(match_id)
+        })
+
+    # Finale
+    for match in final_matches:
+        match_id = match[2]
+
+        voorspellingen_pdf.append({
+            "Fase": "Finale",
+            "home_team": resolve_final_team(match[0]),
+            "away_team": resolve_final_team(match[1]),
+            "home_score": st.session_state.get(f"final_home_{match_id}"),
+            "away_score": st.session_state.get(f"final_away_{match_id}"),
+            "winner": get_final_winner(match_id)
+        })
+
+    # Bonusvragen
+    voorspellingen_pdf.append({
+        "Fase": "Bonusvragen",
+        "home_team": "Gele kaarten",
+        "away_team": "",
+        "home_score": st.session_state.get("bonus_gele_kaarten"),
+        "away_score": ""
+    })
+
+    voorspellingen_pdf.append({
+        "Fase": "Bonusvragen",
+        "home_team": "Rode kaarten",
+        "away_team": "",
+        "home_score": st.session_state.get("bonus_rode_kaarten"),
+        "away_score": ""
+    })
+
+    voorspellingen_pdf.append({
+        "Fase": "Bonusvragen",
+        "home_team": "Doelpunten",
+        "away_team": "",
+        "home_score": st.session_state.get("bonus_doelpunten"),
+        "away_score": ""
+    })
+
+    voorspellingen_pdf.append({
+        "Fase": "Bonusvragen",
+        "home_team": "Topscorer",
+        "away_team": "",
+        "home_score": st.session_state.get("bonus_topscorer"),
+        "away_score": ""
+    })
+
+    return voorspellingen_pdf
+
 
 # =================================================================================
 # MELDINGEN IN EIGEN STIJL
@@ -2124,10 +2270,11 @@ if st.button("Download je ingevulde pool", key="download_pool"):
 
     elif not alles_ingevuld():
         toon_error_bericht(
-            "Zorg dat je alle wedstrijden en bonusvragen hebt ingevuld voordat je je pool downloadt."
+            "Zorg dat je alle wedstrijden, eventuele winnaars bij gelijkspel en bonusvragen hebt ingevuld voordat je je pool downloadt."
         )
 
     else:
+        voorspellingen_pdf = maak_voorspellingen_pdf()
         pdf_buffer = maak_pool_pdf(user, voorspellingen_pdf)
 
         st.download_button(
@@ -2152,7 +2299,7 @@ if st.button("Opslaan en versturen", key="save_all"):
 
     elif not alles_ingevuld():
         toon_error_bericht(
-            "Zorg dat je alle wedstrijden en bonusvragen hebt ingevuld voordat je je pool opslaat."
+            "Zorg dat je alle wedstrijden, eventuele winnaars bij gelijkspel en bonusvragen hebt ingevuld voordat je je pool opslaat."
         )
 
     else:
@@ -2175,15 +2322,13 @@ if st.button("Opslaan en versturen", key="save_all"):
                     "away_team": wedstrijd["away_team"],
                     "home_score": st.session_state.get(f"{match_id}_home"),
                     "away_score": st.session_state.get(f"{match_id}_away"),
+                    "winner": None,
                     "ingediend_op": firestore.SERVER_TIMESTAMP
                 })
-
 
         # =========================================================================
         # 16E FINALE OPSLAAN
         # =========================================================================
-
-        save_used_thirds = set()
 
         for i, match in enumerate(matches):
             match_id = match_number_map[i]
@@ -2194,13 +2339,13 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "Deelnemer": user,
                 "Fase": "16e Finale",
                 "match_id": match_id,
-                "home_team": resolve_team(match[0], save_used_thirds),
-                "away_team": resolve_team(match[1], save_used_thirds),
+                "home_team": round16_teams.get(match[0], "TBD"),
+                "away_team": round16_teams.get(match[1], "TBD"),
                 "home_score": st.session_state.get(f"{match_id}_home"),
                 "away_score": st.session_state.get(f"{match_id}_away"),
+                "winner": get_16e_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
-
 
         # =========================================================================
         # 8E FINALE OPSLAAN
@@ -2219,9 +2364,9 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "away_team": resolve_eighth_team(match[1]),
                 "home_score": st.session_state.get(f"eighth_home_{match_id}"),
                 "away_score": st.session_state.get(f"eighth_away_{match_id}"),
+                "winner": get_eighth_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
-
 
         # =========================================================================
         # KWARTFINALE OPSLAAN
@@ -2240,9 +2385,9 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "away_team": resolve_quarter_team(match[1]),
                 "home_score": st.session_state.get(f"qf_home_{match_id}"),
                 "away_score": st.session_state.get(f"qf_away_{match_id}"),
+                "winner": get_quarter_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
-
 
         # =========================================================================
         # HALVE FINALE OPSLAAN
@@ -2261,9 +2406,9 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "away_team": resolve_semi_team(match[1]),
                 "home_score": st.session_state.get(f"sf_home_{match_id}"),
                 "away_score": st.session_state.get(f"sf_away_{match_id}"),
+                "winner": get_semi_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
-
 
         # =========================================================================
         # FINALE OPSLAAN
@@ -2282,9 +2427,9 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "away_team": resolve_final_team(match[1]),
                 "home_score": st.session_state.get(f"final_home_{match_id}"),
                 "away_score": st.session_state.get(f"final_away_{match_id}"),
+                "winner": get_final_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
-
 
         # =========================================================================
         # BONUSVRAGEN OPSLAAN
@@ -2302,10 +2447,5 @@ if st.button("Opslaan en versturen", key="save_all"):
             "topscorer": st.session_state.get("bonus_topscorer"),
             "ingediend_op": firestore.SERVER_TIMESTAMP
         })
-
-
-        # =========================================================================
-        # SUCCESMELDING
-        # =========================================================================
 
         toon_success_bericht("Alle voorspellingen opgeslagen!")
