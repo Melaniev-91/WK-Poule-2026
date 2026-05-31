@@ -992,15 +992,15 @@ def resolve_team(team_key, used_third_places=None):
     poule, pos = rule
 
     if isinstance(poule, str) and poule.startswith("3:"):
-        return third_place_assignment.get(team_key, "TBD")
+        return third_place_assignment.get(team_key, "Nog niet bekend")
 
     if poule not in standen:
-        return "TBD"
+        return "Nog niet bekend"
 
     ranking = get_poule_ranking(poule)
 
     if len(ranking) < pos:
-        return "TBD"
+        return "Nog niet bekend"
 
     return ranking[pos - 1][0]
 
@@ -1031,7 +1031,7 @@ def get_knockout_winner(home_key, away_key, winner_key, home_team, away_team):
     away_score = st.session_state.get(away_key)
 
     if home_score is None or away_score is None:
-        return "TBD"
+        return "Nog niet bekend"
 
     if home_score > away_score:
         return home_team
@@ -1039,7 +1039,7 @@ def get_knockout_winner(home_key, away_key, winner_key, home_team, away_team):
     if away_score > home_score:
         return away_team
 
-    return st.session_state.get(winner_key, "TBD")
+    return st.session_state.get(winner_key, "Nog niet bekend")
 
 
 st.markdown("""
@@ -1105,8 +1105,8 @@ for row in range(0, len(matches), 2):
     )
 
     # MATCH 1
-    home1 = round16_teams.get(match1[0], "TBD")
-    away1 = round16_teams.get(match1[1], "TBD")
+    home1 = round16_teams.get(match1[0], "Nog niet bekend")
+    away1 = round16_teams.get(match1[1], "Nog niet bekend")
 
     with col1:
         st.markdown(style_country(home1), unsafe_allow_html=True)
@@ -1145,8 +1145,8 @@ for row in range(0, len(matches), 2):
         )
 
     # MATCH 2
-    home2 = round16_teams.get(match2[0], "TBD")
-    away2 = round16_teams.get(match2[1], "TBD")
+    home2 = round16_teams.get(match2[0], "Nog niet bekend")
+    away2 = round16_teams.get(match2[1], "Nog niet bekend")
 
     with col6:
         st.markdown(style_country(home2), unsafe_allow_html=True)
@@ -1239,8 +1239,8 @@ round16_match_map = {
 def get_16e_winner(match_id):
     home_key, away_key = round16_match_map[match_id]
 
-    home_team = round16_teams.get(home_key, "TBD")
-    away_team = round16_teams.get(away_key, "TBD")
+    home_team = round16_teams.get(home_key, "Nog niet bekend")
+    away_team = round16_teams.get(away_key, "Nog niet bekend")
 
     return get_knockout_winner(
         f"{match_id}_home",
@@ -2114,8 +2114,8 @@ def maak_voorspellingen_pdf():
 
         voorspellingen_pdf.append({
             "Fase": "16e Finale",
-            "home_team": round16_teams.get(match[0], "TBD"),
-            "away_team": round16_teams.get(match[1], "TBD"),
+            "home_team": round16_teams.get(match[0], "Nog niet bekend"),
+            "away_team": round16_teams.get(match[1], "Nog niet bekend"),
             "home_score": st.session_state.get(f"{match_id}_home"),
             "away_score": st.session_state.get(f"{match_id}_away"),
             "winner": get_16e_winner(match_id)
@@ -2497,8 +2497,8 @@ if st.button("Klaar en verzenden naar organisatie", key="save_all"):
                 "Deelnemer": user,
                 "Fase": "16e Finale",
                 "match_id": match_id,
-                "home_team": round16_teams.get(match[0], "TBD"),
-                "away_team": round16_teams.get(match[1], "TBD"),
+                "home_team": round16_teams.get(match[0], "Nog niet bekend"),
+                "away_team": round16_teams.get(match[1], "Nog niet bekend"),
                 "home_score": st.session_state.get(f"{match_id}_home"),
                 "away_score": st.session_state.get(f"{match_id}_away"),
                 "winner": get_16e_winner(match_id),
