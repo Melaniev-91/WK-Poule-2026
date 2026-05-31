@@ -118,16 +118,6 @@ st.markdown("""
 st.markdown("""
 <style>
 
-div[data-testid="stRadio"] > div {
-    background: linear-gradient(180deg, #98C400, #6B8E00);
-    border-radius: 14px;
-    padding: 6px;
-    box-shadow:
-        0px 5px 0px #4F6F00,
-        0px 7px 12px rgba(0,0,0,0.25);
-    width: fit-content;
-}
-
 div[data-testid="stRadio"] label {
     background: #EAF7C2 !important;
     color: #002B5C !important;
