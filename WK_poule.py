@@ -2255,78 +2255,6 @@ def toon_success_bericht(tekst):
     """, unsafe_allow_html=True)
 
 # =================================================================================
-# DOWNLOAD BUTTON
-# =================================================================================
-
-def maak_pool_pdf(user, voorspellingen_pdf):
-
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
-
-    y = height - 50
-
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(50, y, f"WK Poule 2026 - {user}")
-    y -= 35
-
-    p.setFont("Helvetica", 10)
-
-    for voorspelling in voorspellingen_pdf:
-
-        if y < 60:
-            p.showPage()
-            y = height - 50
-            p.setFont("Helvetica", 10)
-
-        fase = voorspelling.get("Fase", "")
-        home_team = voorspelling.get("home_team", "")
-        away_team = voorspelling.get("away_team", "")
-        home_score = voorspelling.get("home_score", "")
-        away_score = voorspelling.get("away_score", "")
-        winner = voorspelling.get("winner", "")
-
-        regel = f"{fase}: {home_team} {home_score} - {away_score} {away_team}"
-
-        if winner:
-            regel += f" | winnaar: {winner}"
-
-        p.drawString(50, y, regel)
-        y -= 18
-
-    p.save()
-    buffer.seek(0)
-
-    return buffer
-
-st.markdown("<div style='height:40px;'></div>", unsafe_allow_html=True)
-
-if st.button("Download je ingevulde pool", key="download_pool"):
-
-    if not user:
-        toon_error_bericht(
-            "Vul eerst je naam in voordat je je pool downloadt."
-        )
-
-    elif not alles_ingevuld():
-        toon_error_bericht(
-            "Zorg dat je alle wedstrijden, eventuele winnaars bij gelijkspel en bonusvragen hebt ingevuld voordat je je pool downloadt."
-        )
-
-    else:
-        voorspellingen_pdf = maak_voorspellingen_pdf()
-        pdf_buffer = maak_pool_pdf(user, voorspellingen_pdf)
-
-        st.download_button(
-            label="Klik hier om je PDF te downloaden",
-            data=pdf_buffer,
-            file_name=f"WK_Poule_2026_{user}.pdf",
-            mime="application/pdf",
-            key="download_pdf_final"
-        )
-
-
-# =================================================================================
 # PDF MAKEN
 # =================================================================================
 
@@ -2371,6 +2299,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
 
     return buffer
 
+
 # =================================================================================
 # DOWNLOAD BUTTON
 # =================================================================================
@@ -2380,18 +2309,25 @@ st.markdown("<div style='height:40px;'></div>", unsafe_allow_html=True)
 if st.button("Download je ingevulde pool", key="download_pool"):
 
     if not user:
+
         toon_error_bericht(
             "Vul eerst je naam in voordat je je pool downloadt."
         )
 
     elif not alles_ingevuld():
+
         toon_error_bericht(
             "Zorg dat je alle wedstrijden, eventuele winnaars bij gelijkspel en bonusvragen hebt ingevuld voordat je je pool downloadt."
         )
 
     else:
+
         voorspellingen_pdf = maak_voorspellingen_pdf()
-        pdf_buffer = maak_pool_pdf(user, voorspellingen_pdf)
+
+        pdf_buffer = maak_pool_pdf(
+            user,
+            voorspellingen_pdf
+        )
 
         st.download_button(
             label="Klik hier om je PDF te downloaden",
