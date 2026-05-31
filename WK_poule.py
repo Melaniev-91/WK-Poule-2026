@@ -754,13 +754,47 @@ else:
             poules[poule],
             key=lambda x: x.get("Ronde", 0)
         )
+                huidige_ronde = None
+        wedstrijd_teller = 0
 
         for wedstrijd in wedstrijden_sorted:
+
+            ronde = wedstrijd.get("Ronde", "")
+
+            if ronde != huidige_ronde:
+
+                huidige_ronde = ronde
+                wedstrijd_teller = 1
+
+                st.markdown(
+                    f"""
+                    <div style="
+                        background: linear-gradient(90deg,#FFD36A,#FFC94D);
+                        color:#002B5C;
+                        font-weight:900;
+                        text-align:center;
+                        padding:10px;
+                        border-radius:10px;
+                        margin-top:15px;
+                        margin-bottom:10px;
+                        border:2px solid #D4AF37;
+                        box-shadow:0px 3px 8px rgba(0,0,0,0.20);
+                        font-size:16px;
+                        letter-spacing:1px;
+                    ">
+                        Ronde {ronde}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+            else:
+
+                wedstrijd_teller += 1
 
             home = clean_team(wedstrijd["home_team"])
             away = clean_team(wedstrijd["away_team"])
             match_id = wedstrijd["match_id"]
-            ronde = wedstrijd.get("Ronde", "")
 
             for team in [home, away]:
 
@@ -776,31 +810,27 @@ else:
             st.markdown(
                 f"""
                 <div style="
-                    background:rgba(255,255,255,0.08);
-                    border:1px solid rgba(255,255,255,0.25);
-                    border-radius:14px;
-                    padding:12px;
-                    margin-bottom:10px;
+                    color:white;
+                    font-weight:800;
+                    margin-bottom:8px;
                 ">
-                    <div style="
-                        color:#FFD36A;
-                        font-weight:900;
-                        margin-bottom:8px;
-                    ">
-                        {ronde}
-                    </div>
+                    Wedstrijd {wedstrijd_teller}
+                </div>
                 """,
                 unsafe_allow_html=True
             )
 
-            col_home1, col_home2 = st.columns([4,1], vertical_alignment="center")
+            col_home1, col_home2 = st.columns(
+                [4, 1],
+                vertical_alignment="center"
+            )
 
             with col_home1:
                 st.markdown(
                     style_country(home),
                     unsafe_allow_html=True
                 )
-            
+
             with col_home2:
                 st.number_input(
                     "",
@@ -818,14 +848,17 @@ else:
                 unsafe_allow_html=True
             )
 
-            col_away1, col_away2 = st.columns([4,1], vertical_alignment="center")
+            col_away1, col_away2 = st.columns(
+                [4, 1],
+                vertical_alignment="center"
+            )
 
             with col_away1:
                 st.markdown(
                     style_country(away),
                     unsafe_allow_html=True
                 )
-            
+
             with col_away2:
                 st.number_input(
                     "",
@@ -837,8 +870,6 @@ else:
                     key=f"{match_id}_away",
                     label_visibility="collapsed"
                 )
-
-            st.markdown("</div>", unsafe_allow_html=True)
 
             home_score = st.session_state.get(f"{match_id}_home")
             away_score = st.session_state.get(f"{match_id}_away")
