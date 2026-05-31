@@ -791,7 +791,7 @@ else:
                 unsafe_allow_html=True
             )
 
-            col_home1, col_home2 = st.columns([3,1])
+            col_home1, col_home2 = st.columns([4,1], vertical_alignment="center")
 
             with col_home1:
                 st.markdown(
@@ -807,7 +807,8 @@ else:
                     step=1,
                     value=None,
                     placeholder="",
-                    key=f"{match_id}_home"
+                    key=f"{match_id}_home",
+                    label_visibility="collapsed"
                 )
 
             st.markdown(
@@ -815,7 +816,7 @@ else:
                 unsafe_allow_html=True
             )
 
-            col_away1, col_away2 = st.columns([3,1])
+            col_away1, col_away2 = st.columns([4,1]), vertical_aligment="center")
 
             with col_away1:
                 st.markdown(
@@ -831,7 +832,8 @@ else:
                     step=1,
                     value=None,
                     placeholder="",
-                    key=f"{match_id}_away"
+                    key=f"{match_id}_away",
+                    label_visibility="collapsed"
                 )
 
             st.markdown("</div>", unsafe_allow_html=True)
