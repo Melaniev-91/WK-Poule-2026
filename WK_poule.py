@@ -494,6 +494,8 @@ st.markdown("""
         </div>
         """, unsafe_allow_html=True)
 
+# Computer weergave
+
 if weergave == "Computer":
     for poule in sorted(poules.keys()):
     
@@ -816,7 +818,7 @@ else:
                 unsafe_allow_html=True
             )
 
-            col_away1, col_away2 = st.columns([4,1]), vertical_aligment="center")
+            col_away1, col_away2 = st.columns([4,1]), vertical_alignment="center")
 
             with col_away1:
                 st.markdown(
