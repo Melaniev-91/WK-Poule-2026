@@ -129,8 +129,8 @@ div[data-testid="stRadio"] > div {
 }
 
 div[data-testid="stRadio"] label {
-    background: white !important;
-    color: black !important;
+    background: #EAF7C2 !important;
+    color: #002B5C !important;
     padding: 10px 28px;
     border-radius: 10px;
     font-weight: 900 !important;
