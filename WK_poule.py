@@ -2341,7 +2341,7 @@ if st.button("Ik wil mijn uitslagen opslaan (PDF), zodat ik het kan downloaden v
 # OPSLAAN BUTTON
 # =================================================================================
 
-if st.button("Opslaan en versturen", key="save_all"):
+if st.button("Klaar en verzenden naar organisatie", key="save_all"):
 
     if not user:
         toon_error_bericht(
