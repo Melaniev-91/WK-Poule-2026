@@ -149,8 +149,13 @@ div[data-testid="stRadio"] input[type="radio"]:checked {
     accent-color: black !important;
 }
 
-div[data-testid="stRadio"] label:hover {
-    background: #D7FF5C !important;
+div[data-testid="stRadio"] label {
+    background: #8EBF3D !important;
+    color: white !important;
+    padding: 10px 28px;
+    border-radius: 10px;
+    font-weight: 900 !important;
+    cursor: pointer;
 }
 
 </style>
