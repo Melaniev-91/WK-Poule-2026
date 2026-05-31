@@ -911,7 +911,9 @@ else:
             unsafe_allow_html=True
         )
 
-        toon_stand_tabel(poule, ranking)
+        st.warning(
+    "Stand tabel voor mobiele versie wordt nog toegevoegd."
+)
 
 # Stap .. : Opmaak 16e FINALE
 # _______________________________________________________________________________________________________
