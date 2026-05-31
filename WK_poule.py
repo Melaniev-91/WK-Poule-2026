@@ -2306,18 +2306,18 @@ def maak_pool_pdf(user, voorspellingen_pdf):
 
 st.markdown("<div style='height:40px;'></div>", unsafe_allow_html=True)
 
-if st.button("Download je ingevulde pool", key="download_pool"):
+if st.button("Ik wil mijn uitslagen opslaan (PDF), zodat ik het kan downloaden voor mezelf", key="download_pool"):
 
     if not user:
 
         toon_error_bericht(
-            "Vul eerst je naam in voordat je je pool downloadt."
+            "Je naam is niet ingevuld (bovenaan de pagina)."
         )
 
     elif not alles_ingevuld():
 
         toon_error_bericht(
-            "Zorg dat je alle wedstrijden, eventuele winnaars bij gelijkspel en bonusvragen hebt ingevuld voordat je je pool downloadt."
+            "Je hebt niet alle wedstrijden, eventuele winnaars bij gelijkspel of bonusvragen ingevuld."
         )
 
     else:
@@ -2345,15 +2345,48 @@ if st.button("Opslaan en versturen", key="save_all"):
 
     if not user:
         toon_error_bericht(
-            "Vul eerst je naam in voordat je je pool opslaat."
+            "Je naam is niet ingevuld (bovenaan de pagina)."
         )
 
     elif not alles_ingevuld():
         toon_error_bericht(
-            "Zorg dat je alle wedstrijden, eventuele winnaars bij gelijkspel en bonusvragen hebt ingevuld voordat je je pool opslaat."
+            "Je hebt niet alle wedstrijden, eventuele winnaars bij gelijkspel of bonusvragen ingevuld."
         )
 
     else:
+
+        voortgang_tekst = st.empty()
+        voortgang_balk = st.progress(0)
+
+        totaal_stappen = (
+            sum(len(poule) for poule in poules.values())
+            + len(matches)
+            + len(eighth_matches)
+            + len(quarter_matches)
+            + len(semi_matches)
+            + len(final_matches)
+            + 1
+        )
+
+        stap = 0
+
+        def update_voortgang(tekst):
+            nonlocal stap
+            stap += 1
+            voortgang_tekst.markdown(
+                f"""
+                <div style="
+                    color:white;
+                    font-weight:700;
+                    margin-top:10px;
+                    margin-bottom:8px;
+                ">
+                    {tekst}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            voortgang_balk.progress(min(stap / totaal_stappen, 1.0))
 
         # =========================================================================
         # POULEFASE OPSLAAN
@@ -2377,6 +2410,8 @@ if st.button("Opslaan en versturen", key="save_all"):
                     "ingediend_op": firestore.SERVER_TIMESTAMP
                 })
 
+                update_voortgang("Poulefase wordt opgeslagen...")
+
         # =========================================================================
         # 16E FINALE OPSLAAN
         # =========================================================================
@@ -2397,6 +2432,8 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "winner": get_16e_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
+
+            update_voortgang("16e finales worden opgeslagen...")
 
         # =========================================================================
         # 8E FINALE OPSLAAN
@@ -2419,6 +2456,8 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
 
+            update_voortgang("8e finales worden opgeslagen...")
+
         # =========================================================================
         # KWARTFINALE OPSLAAN
         # =========================================================================
@@ -2439,6 +2478,8 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "winner": get_quarter_winner(match_id),
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
+
+            update_voortgang("Kwartfinales worden opgeslagen...")
 
         # =========================================================================
         # HALVE FINALE OPSLAAN
@@ -2461,6 +2502,8 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
 
+            update_voortgang("Halve finales worden opgeslagen...")
+
         # =========================================================================
         # FINALE OPSLAAN
         # =========================================================================
@@ -2482,6 +2525,8 @@ if st.button("Opslaan en versturen", key="save_all"):
                 "ingediend_op": firestore.SERVER_TIMESTAMP
             })
 
+            update_voortgang("Finale wordt opgeslagen...")
+
         # =========================================================================
         # BONUSVRAGEN OPSLAAN
         # =========================================================================
@@ -2498,5 +2543,22 @@ if st.button("Opslaan en versturen", key="save_all"):
             "topscorer": st.session_state.get("bonus_topscorer"),
             "ingediend_op": firestore.SERVER_TIMESTAMP
         })
+
+        update_voortgang("Bonusvragen worden opgeslagen...")
+
+        voortgang_balk.progress(1.0)
+        voortgang_tekst.markdown(
+            """
+            <div style="
+                color:white;
+                font-weight:800;
+                margin-top:10px;
+                margin-bottom:8px;
+            ">
+                Opslaan voltooid.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         toon_success_bericht("Alle voorspellingen opgeslagen!")
