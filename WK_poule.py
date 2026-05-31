@@ -911,14 +911,17 @@ else:
             unsafe_allow_html=True
         )
 
-        for positie, (team, stats) in enumerate(ranking, start=1):
+ for positie, (team, stats) in enumerate(ranking, start=1):
 
     if positie == 1:
         icoon = "🥇"
+
     elif positie == 2:
         icoon = "🥈"
+
     elif positie == 3:
         icoon = "🥉"
+
     else:
         icoon = f"{positie}."
 
