@@ -2299,6 +2299,45 @@ def maak_pool_pdf(user, voorspellingen_pdf):
 
     return buffer
 
+# =================================================================================
+# BUTTON STYLING
+# =================================================================================
+
+st.markdown("""
+<style>
+
+/* 3D stijl voor alle normale buttons en download buttons */
+div.stButton > button,
+div[data-testid="stDownloadButton"] > button {
+    background: linear-gradient(180deg, #FFFFFF, #E6E6E6) !important;
+    color: #001F3F !important;
+    border: 2px solid #CFCFCF !important;
+    border-radius: 12px !important;
+    padding: 0.65rem 1.2rem !important;
+    font-weight: 800 !important;
+    box-shadow: 0px 5px 0px #A9A9A9, 0px 7px 12px rgba(0,0,0,0.25) !important;
+    transition: all 0.12s ease-in-out !important;
+}
+
+/* Hover: lichtgrijs */
+div.stButton > button:hover,
+div[data-testid="stDownloadButton"] > button:hover {
+    background: linear-gradient(180deg, #F2F2F2, #DADADA) !important;
+    color: #001F3F !important;
+    border-color: #BDBDBD !important;
+    transform: translateY(1px);
+    box-shadow: 0px 4px 0px #9E9E9E, 0px 6px 10px rgba(0,0,0,0.22) !important;
+}
+
+/* Klik-effect */
+div.stButton > button:active,
+div[data-testid="stDownloadButton"] > button:active {
+    transform: translateY(5px);
+    box-shadow: 0px 1px 0px #8A8A8A, 0px 3px 6px rgba(0,0,0,0.25) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # =================================================================================
 # DOWNLOAD BUTTON
