@@ -2368,25 +2368,28 @@ if st.button("Opslaan en versturen", key="save_all"):
             + 1
         )
 
-        stap = 0
+       stap = {"waarde": 0}
 
-        def update_voortgang(tekst):
-            nonlocal stap
-            stap += 1
-            voortgang_tekst.markdown(
-                f"""
-                <div style="
-                    color:white;
-                    font-weight:700;
-                    margin-top:10px;
-                    margin-bottom:8px;
-                ">
-                    {tekst}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            voortgang_balk.progress(min(stap / totaal_stappen, 1.0))
+def update_voortgang(tekst):
+    stap["waarde"] += 1
+
+    voortgang_tekst.markdown(
+        f"""
+        <div style="
+            color:white;
+            font-weight:700;
+            margin-top:10px;
+            margin-bottom:8px;
+        ">
+            {tekst}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    voortgang_balk.progress(
+        min(stap["waarde"] / totaal_stappen, 1.0)
+    )
 
         # =========================================================================
         # POULEFASE OPSLAAN
