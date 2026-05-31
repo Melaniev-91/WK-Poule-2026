@@ -443,7 +443,7 @@ for poule in sorted(poules.keys()):
                     max_value=20,
                     step=1,
                     value=None,
-                    placeholder="-",
+                    placeholder="",
                     key=f"{match_id}_home"
                 )
 
@@ -466,7 +466,7 @@ for poule in sorted(poules.keys()):
                     max_value=20,
                     step=1,
                     value=None,
-                    placeholder="-",
+                    placeholder="",
                     key=f"{match_id}_away"
                 )
 
@@ -1119,7 +1119,7 @@ for row in range(0, len(matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1140,7 +1140,7 @@ for row in range(0, len(matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1159,7 +1159,7 @@ for row in range(0, len(matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1180,7 +1180,7 @@ for row in range(0, len(matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1315,7 +1315,7 @@ for row in range(0, len(eighth_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1336,7 +1336,7 @@ for row in range(0, len(eighth_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1355,7 +1355,7 @@ for row in range(0, len(eighth_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1376,7 +1376,7 @@ for row in range(0, len(eighth_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1502,7 +1502,7 @@ for i in range(0, len(quarter_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1523,7 +1523,7 @@ for i in range(0, len(quarter_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1542,7 +1542,7 @@ for i in range(0, len(quarter_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1563,7 +1563,7 @@ for i in range(0, len(quarter_matches), 2):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1672,7 +1672,7 @@ for i in range(0, len(semi_matches), 2):
         st.markdown(style_country(home1), unsafe_allow_html=True)
 
     with col2:
-        st.number_input("", key=f"sf_home_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="-", label_visibility="collapsed")
+        st.number_input("", key=f"sf_home_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
 
     with col3:
         st.markdown("<div style='text-align:center;color:white;font-weight:900;'>VS</div>", unsafe_allow_html=True)
@@ -1681,7 +1681,7 @@ for i in range(0, len(semi_matches), 2):
         st.markdown(style_country(away1), unsafe_allow_html=True)
 
     with col5:
-        st.number_input("", key=f"sf_away_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="-", label_visibility="collapsed")
+        st.number_input("", key=f"sf_away_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
 
     home2 = resolve_semi_team(match2[0])
     away2 = resolve_semi_team(match2[1])
@@ -1690,7 +1690,7 @@ for i in range(0, len(semi_matches), 2):
         st.markdown(style_country(home2), unsafe_allow_html=True)
 
     with col7:
-        st.number_input("", key=f"sf_home_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="-", label_visibility="collapsed")
+        st.number_input("", key=f"sf_home_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
 
     with col8:
         st.markdown("<div style='text-align:center;color:white;font-weight:900;'>VS</div>", unsafe_allow_html=True)
@@ -1699,7 +1699,7 @@ for i in range(0, len(semi_matches), 2):
         st.markdown(style_country(away2), unsafe_allow_html=True)
 
     with col10:
-        st.number_input("", key=f"sf_away_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="-", label_visibility="collapsed")
+        st.number_input("", key=f"sf_away_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
 
     # GELIJKSPEL KEUZES
     tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
@@ -1817,7 +1817,7 @@ for i in range(len(final_matches)):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
@@ -1838,7 +1838,7 @@ for i in range(len(final_matches)):
             max_value=20,
             step=1,
             value=None,
-            placeholder="-",
+            placeholder="",
             label_visibility="collapsed"
         )
 
