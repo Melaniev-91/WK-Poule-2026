@@ -367,6 +367,53 @@ div[data-testid="stNumberInput"] button {
 
 standen = {}
 
+# HEAD TO HEAD functie
+def head_to_head(teams, wedstrijden):
+
+    h2h = defaultdict(lambda: {
+        "punten": 0,
+        "saldo": 0,
+        "voor": 0
+    })
+
+    for w in wedstrijden:
+
+        home = clean_team(w["home_team"])
+        away = clean_team(w["away_team"])
+
+        if home not in teams or away not in teams:
+            continue
+
+        hs = st.session_state.get(f"{w['match_id']}_home")
+        aw = st.session_state.get(f"{w['match_id']}_away")
+
+        # alleen meenemen als beide ingevuld
+        if hs is None or aw is None:
+            continue
+
+        hs = int(hs)
+        aw = int(aw)
+
+        # punten
+        if hs > aw:
+            h2h[home]["punten"] += 3
+
+        elif aw > hs:
+            h2h[away]["punten"] += 3
+
+        else:
+            h2h[home]["punten"] += 1
+            h2h[away]["punten"] += 1
+
+        # goals
+        h2h[home]["voor"] += hs
+        h2h[home]["saldo"] += hs - aw
+
+        h2h[away]["voor"] += aw
+        h2h[away]["saldo"] += aw - hs
+
+    return h2h
+
 # Stap 4.2 Opmaak poulfase
 # _______________________________________________________________________________________________________
 
@@ -561,56 +608,7 @@ if weergave == "Computer":
     
             from collections import defaultdict
             import pandas as pd
-    
-    
-            # HEAD TO HEAD functie
-            def head_to_head(teams, wedstrijden):
-    
-                h2h = defaultdict(lambda: {
-                    "punten": 0,
-                    "saldo": 0,
-                    "voor": 0
-                })
-    
-                for w in wedstrijden:
-    
-                    home = clean_team(w["home_team"])
-                    away = clean_team(w["away_team"])
-    
-                    if home not in teams or away not in teams:
-                        continue
-    
-                    hs = st.session_state.get(f"{w['match_id']}_home")
-                    aw = st.session_state.get(f"{w['match_id']}_away")
-    
-                    # alleen meenemen als beide ingevuld
-                    if hs is None or aw is None:
-                        continue
-    
-                    hs = int(hs)
-                    aw = int(aw)
-    
-                    # punten
-                    if hs > aw:
-                        h2h[home]["punten"] += 3
-    
-                    elif aw > hs:
-                        h2h[away]["punten"] += 3
-    
-                    else:
-                        h2h[home]["punten"] += 1
-                        h2h[away]["punten"] += 1
-    
-                    # goals
-                    h2h[home]["voor"] += hs
-                    h2h[home]["saldo"] += hs - aw
-    
-                    h2h[away]["voor"] += aw
-                    h2h[away]["saldo"] += aw - hs
-    
-                return h2h
-    
-    
+
             h2h = head_to_head(
                 list(standen[poule].keys()),
                 poules[poule]
