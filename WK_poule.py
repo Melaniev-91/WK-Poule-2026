@@ -129,8 +129,8 @@ div[data-testid="stRadio"] > div {
 }
 
 div[data-testid="stRadio"] label {
-    background: #BFE715;
-    color: #003B1F !important;
+    background: white !important;
+    color: black !important;
     padding: 10px 28px;
     border-radius: 10px;
     font-weight: 900 !important;
@@ -138,8 +138,13 @@ div[data-testid="stRadio"] label {
 }
 
 div[data-testid="stRadio"] label:has(input:checked) {
-    background: #009B3A !important;
+    background: #6B8E00 !important;
     color: white !important;
+}
+
+/* Radiobutton zwart maken indien geselecteerd */
+div[data-testid="stRadio"] input[type="radio"]:checked {
+    accent-color: black !important;
 }
 
 div[data-testid="stRadio"] label:hover {
@@ -810,15 +815,21 @@ else:
             st.markdown(
                 f"""
                 <div style="
+                    background: linear-gradient(90deg,#002B5C,#004B8D);
                     color:white;
                     font-weight:800;
+                    text-align:center;
+                    padding:8px;
+                    border-radius:8px;
                     margin-bottom:8px;
+                    border:1px solid #D4AF37;
+                    font-size:14px;
                 ">
                     Wedstrijd {wedstrijd_teller}
                 </div>
                 """,
                 unsafe_allow_html=True
-            )
+)
 
             col_home1, col_home2 = st.columns(
                 [4, 1],
