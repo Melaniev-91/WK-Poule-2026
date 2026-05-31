@@ -137,9 +137,21 @@ div[data-testid="stRadio"] label {
     cursor: pointer;
 }
 
+div[data-testid="stRadio"] label span {
+    color: black !important;
+}
+
 div[data-testid="stRadio"] label:has(input:checked) {
     background: #6B8E00 !important;
+}
+
+div[data-testid="stRadio"] label:has(input:checked) span {
     color: white !important;
+}
+
+/* Radiobutton zwart maken */
+div[data-testid="stRadio"] input[type="radio"] {
+    accent-color: black !important;
 }
 
 /* Radiobutton zwart maken indien geselecteerd */
