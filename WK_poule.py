@@ -150,8 +150,8 @@ div[data-testid="stRadio"] input[type="radio"]:checked {
 }
 
 div[data-testid="stRadio"] label {
-    background: #8EBF3D !important;
-    color: white !important;
+    background: #E6E6E6 !important;
+    color: #1A1A1A !important;
     padding: 10px 28px;
     border-radius: 10px;
     font-weight: 900 !important;
