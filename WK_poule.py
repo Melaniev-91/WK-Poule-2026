@@ -110,6 +110,52 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# =================================================================================
+# WEERGAVE KEUZE: COMPUTER / MOBIEL
+# =================================================================================
+
+st.markdown("""
+<style>
+
+div[data-testid="stRadio"] > div {
+    background: linear-gradient(180deg, #98C400, #6B8E00);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow:
+        0px 5px 0px #4F6F00,
+        0px 7px 12px rgba(0,0,0,0.25);
+    width: fit-content;
+}
+
+div[data-testid="stRadio"] label {
+    background: #BFE715;
+    color: #003B1F !important;
+    padding: 10px 28px;
+    border-radius: 10px;
+    font-weight: 900 !important;
+    cursor: pointer;
+}
+
+div[data-testid="stRadio"] label:has(input:checked) {
+    background: #009B3A !important;
+    color: white !important;
+}
+
+div[data-testid="stRadio"] label:hover {
+    background: #D7FF5C !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+weergave = st.radio(
+    "",
+    ["Computer", "Mobiel"],
+    horizontal=True,
+    key="weergave_keuze",
+    label_visibility="collapsed"
+)
+
 # Stap 1.4 Algemene spacing & input styling
 st.markdown("""
 <style>
@@ -352,328 +398,335 @@ st.markdown("""
         </div>
         """, unsafe_allow_html=True)
 
-for poule in sorted(poules.keys()):
-
-    # Hoeveelheid ruimte
-    title_left, spacer_title, title_right = st.columns([3.2, 0.4, 2.3])
-
-    header_style = """
-        <div style="
-            background: linear-gradient(90deg, #002B5C, #004B8D);
-            padding: 6px 12px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1.5px solid #D4AF37;
-            box-shadow: 0px 2px 6px rgba(0,0,0,0.12);
-        ">
-            <span style="
-                color: white;
-                font-size: 16px;
-                font-weight: 700;
-                letter-spacing: 1px;
+if weergave == "Computer":
+    for poule in sorted(poules.keys()):
+    
+        # Hoeveelheid ruimte
+        title_left, spacer_title, title_right = st.columns([3.2, 0.4, 2.3])
+    
+        header_style = """
+            <div style="
+                background: linear-gradient(90deg, #002B5C, #004B8D);
+                padding: 6px 12px;
+                border-radius: 10px;
+                text-align: center;
+                border: 1.5px solid #D4AF37;
+                box-shadow: 0px 2px 6px rgba(0,0,0,0.12);
             ">
-    """
-
-    # POULE (links)
-    with title_left:
-        st.markdown(
-            header_style + f"Poule {poule}</span></div>",
-            unsafe_allow_html=True
+                <span style="
+                    color: white;
+                    font-size: 16px;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                ">
+        """
+    
+        # POULE (links)
+        with title_left:
+            st.markdown(
+                header_style + f"Poule {poule}</span></div>",
+                unsafe_allow_html=True
+            )
+    
+        # STAND (rechts)
+        with title_right:
+            st.markdown(
+                header_style + "Stand</span></div>",
+                unsafe_allow_html=True
+            )
+    
+        left_col, spacer, right_col = st.columns([3.2, 0.4, 2.3])
+    
+        standen[poule] = {}
+    
+        wedstrijden_sorted = sorted(
+            poules[poule],
+            key=lambda x: x.get("Ronde", 0)
         )
+    
+        # LINKS = wedstrijden
+        with left_col:
+    
+            for wedstrijd in wedstrijden_sorted:
+    
+                home = clean_team(wedstrijd["home_team"])
+                away = clean_team(wedstrijd["away_team"])
+                match_id = wedstrijd["match_id"]
+                ronde = wedstrijd.get("Ronde", "")
+    
+                # teams initialiseren
+                for team in [home, away]:
+    
+                    if team not in standen[poule]:
+                        standen[poule][team] = {
+                            "punten": 0,
+                            "gespeeld": 0,
+                            "voor": 0,
+                            "tegen": 0,
+                            "saldo": 0
+                        }
+    
+                col0, col1, col2, col3, col4, col5 = st.columns(
+                    [0.5, 1.5, 0.5, 1, 1.5, 0.5],
+                    vertical_alignment="center"
+                )
+    
+                with col0:
+                    st.markdown(
+                        f"<div style='font-weight:700; color:white;'>{ronde}</div>",
+                        unsafe_allow_html=True
+                    )
+    
+                with col1:
+                    st.markdown(
+                        f"{style_country(home)}",
+                        unsafe_allow_html=True
+                    )
+    
+                with col2:
+                    st.number_input(
+                        label="",
+                        min_value=0,
+                        max_value=20,
+                        step=1,
+                        value=None,
+                        placeholder="",
+                        key=f"{match_id}_home"
+                    )
+    
+                with col3:
+                    st.markdown(
+                        "<div style='text-align:center; color:white; font-size:16px; font-weight:900;'>VS</div>",
+                        unsafe_allow_html=True
+                    )
+    
+                with col4:
+                    st.markdown(
+                        f"{style_country(away)}",
+                        unsafe_allow_html=True
+                    )
+    
+                with col5:
+                    st.number_input(
+                        label="",
+                        min_value=0,
+                        max_value=20,
+                        step=1,
+                        value=None,
+                        placeholder="",
+                        key=f"{match_id}_away"
+                    )
+    
+                # LIVE STAND BEREKENEN
+                home_score = st.session_state.get(f"{match_id}_home")
+                away_score = st.session_state.get(f"{match_id}_away")
+    
+                # Alleen berekenen als beide velden ingevuld zijn
+                if home_score is not None and away_score is not None:
+    
+                    standen[poule][home]["gespeeld"] += 1
+                    standen[poule][away]["gespeeld"] += 1
+    
+                    standen[poule][home]["voor"] += home_score
+                    standen[poule][home]["tegen"] += away_score
+    
+                    standen[poule][away]["voor"] += away_score
+                    standen[poule][away]["tegen"] += home_score
+    
+                    standen[poule][home]["saldo"] = (
+                            standen[poule][home]["voor"]
+                            - standen[poule][home]["tegen"]
+                    )
+    
+                    standen[poule][away]["saldo"] = (
+                            standen[poule][away]["voor"]
+                            - standen[poule][away]["tegen"]
+                    )
+    
+                    if home_score > away_score:
+                        standen[poule][home]["punten"] += 3
+    
+                    elif away_score > home_score:
+                        standen[poule][away]["punten"] += 3
+    
+                    else:
+                        standen[poule][home]["punten"] += 1
+                        standen[poule][away]["punten"] += 1
+    
+        # RECHTS = LIVE STAND TABEL
+        with right_col:
+    
+            # kleine spacing bovenaan
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+    
+            from collections import defaultdict
+            import pandas as pd
+    
+    
+            # HEAD TO HEAD functie
+            def head_to_head(teams, wedstrijden):
+    
+                h2h = defaultdict(lambda: {
+                    "punten": 0,
+                    "saldo": 0,
+                    "voor": 0
+                })
+    
+                for w in wedstrijden:
+    
+                    home = clean_team(w["home_team"])
+                    away = clean_team(w["away_team"])
+    
+                    if home not in teams or away not in teams:
+                        continue
+    
+                    hs = st.session_state.get(f"{w['match_id']}_home")
+                    aw = st.session_state.get(f"{w['match_id']}_away")
+    
+                    # alleen meenemen als beide ingevuld
+                    if hs is None or aw is None:
+                        continue
+    
+                    hs = int(hs)
+                    aw = int(aw)
+    
+                    # punten
+                    if hs > aw:
+                        h2h[home]["punten"] += 3
+    
+                    elif aw > hs:
+                        h2h[away]["punten"] += 3
+    
+                    else:
+                        h2h[home]["punten"] += 1
+                        h2h[away]["punten"] += 1
+    
+                    # goals
+                    h2h[home]["voor"] += hs
+                    h2h[home]["saldo"] += hs - aw
+    
+                    h2h[away]["voor"] += aw
+                    h2h[away]["saldo"] += aw - hs
+    
+                return h2h
+    
+    
+            h2h = head_to_head(
+                list(standen[poule].keys()),
+                poules[poule]
+            )
+    
+    
+            # sortering
+            def final_sort(item):
+    
+                team, stats = item
+                h = h2h[team]
+    
+                return (
+                    stats["punten"],
+                    stats["saldo"],
+                    stats["voor"],
+                    h["punten"],
+                    h["saldo"],
+                    h["voor"]
+                )
+    
+    
+            ranking = sorted(
+                standen[poule].items(),
+                key=final_sort,
+                reverse=True
+            )
+    
+            # DATAFRAME bouwen
+            table_data = []
+    
+            for i, (team, stats) in enumerate(ranking, start=1):
+                code = country_code(team)
+    
+                if code:
+                    flag_html = f'<img src="https://flagcdn.com/24x18/{code}.png" style="width:24px; height:18px; object-fit:cover; border-radius:2px;">'
+                else:
+                    flag_html = ""
+    
+                land_naam = team.upper() if normalize_text(team) == "nederland" else team
+                land_kleur = "#FF8C00" if normalize_text(team) == "nederland" else "black"
+    
+                table_data.append({
+                    "NR": i,
+                    "Land": f'<span style="display:flex; align-items:center; gap:6px; color:{land_kleur}; font-weight:700;">{flag_html}{land_naam}</span>',
+                    "Pt": stats["punten"],
+                    "DS": stats["saldo"],
+                    "DV": stats["voor"],
+                    "DT": stats["tegen"]
+                })
+    
+            df = pd.DataFrame(table_data)
+    
+            # TABEL STYLING
+            st.markdown("""
+            <style>
+    
+            .stand-table table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 15px;
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+    
+            .stand-table thead tr {
+                background: #001F3F;
+                color: white;
+            }
+    
+            .stand-table th {
+                padding: 10px;
+                text-align: center;
+                font-weight: 700;
+            }
+    
+            .stand-table td {
+                padding: 9px;
+                text-align: center;
+                border-bottom: 1px solid #EAEAEA;
+                font-weight: 600;
+            }
+    
+            .stand-table tbody tr:nth-child(1),
+            .stand-table tbody tr:nth-child(2) {
+                background-color: #C8F7C5;
+            }
+    
+            .stand-table tbody tr:nth-child(3) {
+                background-color: #FFE0B2;
+            }
+    
+            .stand-table tbody tr:nth-child(4) {
+                background-color: #FFFFFF;
+            }
+    
+            </style>
+            """, unsafe_allow_html=True)
+    
+            # dataframe tonen als HTML
+            st.markdown(
+                f"""
+                <div class="stand-table">
+                    {df.to_html(index=False, escape=False)}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-    # STAND (rechts)
-    with title_right:
-        st.markdown(
-            header_style + "Stand</span></div>",
-            unsafe_allow_html=True
-        )
+else:
 
-    left_col, spacer, right_col = st.columns([3.2, 0.4, 2.3])
-
-    standen[poule] = {}
-
-    wedstrijden_sorted = sorted(
-        poules[poule],
-        key=lambda x: x.get("Ronde", 0)
+    st.info(
+        "📱 Mobiele versie wordt binnenkort toegevoegd. "
+        "Gebruik voorlopig de computerweergave."
     )
-
-    # LINKS = wedstrijden
-    with left_col:
-
-        for wedstrijd in wedstrijden_sorted:
-
-            home = clean_team(wedstrijd["home_team"])
-            away = clean_team(wedstrijd["away_team"])
-            match_id = wedstrijd["match_id"]
-            ronde = wedstrijd.get("Ronde", "")
-
-            # teams initialiseren
-            for team in [home, away]:
-
-                if team not in standen[poule]:
-                    standen[poule][team] = {
-                        "punten": 0,
-                        "gespeeld": 0,
-                        "voor": 0,
-                        "tegen": 0,
-                        "saldo": 0
-                    }
-
-            col0, col1, col2, col3, col4, col5 = st.columns(
-                [0.5, 1.5, 0.5, 1, 1.5, 0.5],
-                vertical_alignment="center"
-            )
-
-            with col0:
-                st.markdown(
-                    f"<div style='font-weight:700; color:white;'>{ronde}</div>",
-                    unsafe_allow_html=True
-                )
-
-            with col1:
-                st.markdown(
-                    f"{style_country(home)}",
-                    unsafe_allow_html=True
-                )
-
-            with col2:
-                st.number_input(
-                    label="",
-                    min_value=0,
-                    max_value=20,
-                    step=1,
-                    value=None,
-                    placeholder="",
-                    key=f"{match_id}_home"
-                )
-
-            with col3:
-                st.markdown(
-                    "<div style='text-align:center; color:white; font-size:16px; font-weight:900;'>VS</div>",
-                    unsafe_allow_html=True
-                )
-
-            with col4:
-                st.markdown(
-                    f"{style_country(away)}",
-                    unsafe_allow_html=True
-                )
-
-            with col5:
-                st.number_input(
-                    label="",
-                    min_value=0,
-                    max_value=20,
-                    step=1,
-                    value=None,
-                    placeholder="",
-                    key=f"{match_id}_away"
-                )
-
-            # LIVE STAND BEREKENEN
-            home_score = st.session_state.get(f"{match_id}_home")
-            away_score = st.session_state.get(f"{match_id}_away")
-
-            # Alleen berekenen als beide velden ingevuld zijn
-            if home_score is not None and away_score is not None:
-
-                standen[poule][home]["gespeeld"] += 1
-                standen[poule][away]["gespeeld"] += 1
-
-                standen[poule][home]["voor"] += home_score
-                standen[poule][home]["tegen"] += away_score
-
-                standen[poule][away]["voor"] += away_score
-                standen[poule][away]["tegen"] += home_score
-
-                standen[poule][home]["saldo"] = (
-                        standen[poule][home]["voor"]
-                        - standen[poule][home]["tegen"]
-                )
-
-                standen[poule][away]["saldo"] = (
-                        standen[poule][away]["voor"]
-                        - standen[poule][away]["tegen"]
-                )
-
-                if home_score > away_score:
-                    standen[poule][home]["punten"] += 3
-
-                elif away_score > home_score:
-                    standen[poule][away]["punten"] += 3
-
-                else:
-                    standen[poule][home]["punten"] += 1
-                    standen[poule][away]["punten"] += 1
-
-    # RECHTS = LIVE STAND TABEL
-    with right_col:
-
-        # kleine spacing bovenaan
-        st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-
-        from collections import defaultdict
-        import pandas as pd
-
-
-        # HEAD TO HEAD functie
-        def head_to_head(teams, wedstrijden):
-
-            h2h = defaultdict(lambda: {
-                "punten": 0,
-                "saldo": 0,
-                "voor": 0
-            })
-
-            for w in wedstrijden:
-
-                home = clean_team(w["home_team"])
-                away = clean_team(w["away_team"])
-
-                if home not in teams or away not in teams:
-                    continue
-
-                hs = st.session_state.get(f"{w['match_id']}_home")
-                aw = st.session_state.get(f"{w['match_id']}_away")
-
-                # alleen meenemen als beide ingevuld
-                if hs is None or aw is None:
-                    continue
-
-                hs = int(hs)
-                aw = int(aw)
-
-                # punten
-                if hs > aw:
-                    h2h[home]["punten"] += 3
-
-                elif aw > hs:
-                    h2h[away]["punten"] += 3
-
-                else:
-                    h2h[home]["punten"] += 1
-                    h2h[away]["punten"] += 1
-
-                # goals
-                h2h[home]["voor"] += hs
-                h2h[home]["saldo"] += hs - aw
-
-                h2h[away]["voor"] += aw
-                h2h[away]["saldo"] += aw - hs
-
-            return h2h
-
-
-        h2h = head_to_head(
-            list(standen[poule].keys()),
-            poules[poule]
-        )
-
-
-        # sortering
-        def final_sort(item):
-
-            team, stats = item
-            h = h2h[team]
-
-            return (
-                stats["punten"],
-                stats["saldo"],
-                stats["voor"],
-                h["punten"],
-                h["saldo"],
-                h["voor"]
-            )
-
-
-        ranking = sorted(
-            standen[poule].items(),
-            key=final_sort,
-            reverse=True
-        )
-
-        # DATAFRAME bouwen
-        table_data = []
-
-        for i, (team, stats) in enumerate(ranking, start=1):
-            code = country_code(team)
-
-            if code:
-                flag_html = f'<img src="https://flagcdn.com/24x18/{code}.png" style="width:24px; height:18px; object-fit:cover; border-radius:2px;">'
-            else:
-                flag_html = ""
-
-            land_naam = team.upper() if normalize_text(team) == "nederland" else team
-            land_kleur = "#FF8C00" if normalize_text(team) == "nederland" else "black"
-
-            table_data.append({
-                "NR": i,
-                "Land": f'<span style="display:flex; align-items:center; gap:6px; color:{land_kleur}; font-weight:700;">{flag_html}{land_naam}</span>',
-                "Pt": stats["punten"],
-                "DS": stats["saldo"],
-                "DV": stats["voor"],
-                "DT": stats["tegen"]
-            })
-
-        df = pd.DataFrame(table_data)
-
-        # TABEL STYLING
-        st.markdown("""
-        <style>
-
-        .stand-table table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 15px;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .stand-table thead tr {
-            background: #001F3F;
-            color: white;
-        }
-
-        .stand-table th {
-            padding: 10px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .stand-table td {
-            padding: 9px;
-            text-align: center;
-            border-bottom: 1px solid #EAEAEA;
-            font-weight: 600;
-        }
-
-        .stand-table tbody tr:nth-child(1),
-        .stand-table tbody tr:nth-child(2) {
-            background-color: #C8F7C5;
-        }
-
-        .stand-table tbody tr:nth-child(3) {
-            background-color: #FFE0B2;
-        }
-
-        .stand-table tbody tr:nth-child(4) {
-            background-color: #FFFFFF;
-        }
-
-        </style>
-        """, unsafe_allow_html=True)
-
-        # dataframe tonen als HTML
-        st.markdown(
-            f"""
-            <div class="stand-table">
-                {df.to_html(index=False, escape=False)}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
 
 # Stap .. : Opmaak 16e FINALE
 # _______________________________________________________________________________________________________
