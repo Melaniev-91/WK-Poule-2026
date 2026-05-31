@@ -911,45 +911,45 @@ else:
             unsafe_allow_html=True
         )
 
- for positie, (team, stats) in enumerate(ranking, start=1):
+        for positie, (team, stats) in enumerate(ranking, start=1):
 
-    if positie == 1:
-        icoon = "🥇"
+            if positie == 1:
+                icoon = "🥇"
 
-    elif positie == 2:
-        icoon = "🥈"
+            elif positie == 2:
+                icoon = "🥈"
 
-    elif positie == 3:
-        icoon = "🥉"
+            elif positie == 3:
+                icoon = "🥉"
 
-    else:
-        icoon = f"{positie}."
+            else:
+                icoon = f"{positie}."
 
-    st.markdown(
-        f"""
-        <div style="
-            background:white;
-            border-radius:10px;
-            padding:10px;
-            margin-bottom:6px;
-        ">
-            <div style="
-                font-weight:800;
-                font-size:15px;
-            ">
-                {icoon} {team} &nbsp;&nbsp; {stats["punten"]} pt
-            </div>
+            st.markdown(
+                f"""
+                <div style="
+                    background:white;
+                    border-radius:10px;
+                    padding:10px;
+                    margin-bottom:6px;
+                ">
+                    <div style="
+                        font-weight:800;
+                        font-size:15px;
+                    ">
+                        {icoon} {team} &nbsp;&nbsp; {stats["punten"]} pt
+                    </div>
 
-            <div style="
-                font-size:13px;
-                color:#555;
-            ">
-                DS {stats["saldo"]:+} | DV {stats["voor"]} | DT {stats["tegen"]}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+                    <div style="
+                        font-size:13px;
+                        color:#555;
+                    ">
+                        DS {stats["saldo"]:+} | DV {stats["voor"]} | DT {stats["tegen"]}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 # Stap .. : Opmaak 16e FINALE
 # _______________________________________________________________________________________________________
