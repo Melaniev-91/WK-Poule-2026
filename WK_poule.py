@@ -11,6 +11,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import firebase_admin
 from firebase_admin import credentials, firestore
+import pandas as pd
 
 # _______________________________________________________________________________________________________
 # Firebase database connectie maken
@@ -607,7 +608,6 @@ if weergave == "Computer":
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
     
             from collections import defaultdict
-            import pandas as pd
 
             h2h = head_to_head(
                 list(standen[poule].keys()),
