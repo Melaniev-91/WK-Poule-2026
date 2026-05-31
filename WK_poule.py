@@ -419,61 +419,52 @@ def head_to_head(teams, wedstrijden):
 # _______________________________________________________________________________________________________
 
 # TABEL STYLING
-    st.markdown("""
-    <style>
-    
-    .stand-table table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 15px;
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    
-    .stand-table thead tr {
-        background: #001F3F;
-        color: white;
-    }
-    
-    .stand-table th {
-        padding: 10px;
-        text-align: center;
-        font-weight: 700;
-    }
-    
-    .stand-table td {
-        padding: 9px;
-        text-align: center;
-        border-bottom: 1px solid #EAEAEA;
-        font-weight: 600;
-    }
-    
-    .stand-table tbody tr:nth-child(1),
-    .stand-table tbody tr:nth-child(2) {
-        background-color: #C8F7C5;
-    }
-    
-    .stand-table tbody tr:nth-child(3) {
-        background-color: #FFE0B2;
-    }
-    
-    .stand-table tbody tr:nth-child(4) {
-        background-color: #FFFFFF;
-    }
-    
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # dataframe tonen als HTML
-    st.markdown(
-        f"""
-        <div class="stand-table">
-            {df.to_html(index=False, escape=False)}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+st.markdown("""
+<style>
+
+.stand-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.stand-table thead tr {
+    background: #001F3F;
+    color: white;
+}
+
+.stand-table th {
+    padding: 10px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.stand-table td {
+    padding: 9px;
+    text-align: center;
+    border-bottom: 1px solid #EAEAEA;
+    font-weight: 600;
+    color: black !important;
+}
+
+.stand-table tbody tr:nth-child(1),
+.stand-table tbody tr:nth-child(2) {
+    background-color: #C8F7C5;
+}
+
+.stand-table tbody tr:nth-child(3) {
+    background-color: #FFE0B2;
+}
+
+.stand-table tbody tr:nth-child(4) {
+    background-color: #FFFFFF;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # Stap 4.2.1 Titel toevoegen aan kolommen / ruimtes (Poule & Stand)
 
@@ -718,6 +709,14 @@ if weergave == "Computer":
                 })
     
             df = pd.DataFrame(table_data)
+            st.markdown(
+                f"""
+                <div class="stand-table">
+                    {df.to_html(index=False, escape=False)}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 # Mobiele versie poulefase
 else:
