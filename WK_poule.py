@@ -914,18 +914,28 @@ else:
         table_data = []
 
         for i, (team, stats) in enumerate(ranking, start=1):
-
+        
+            code = country_code(team)
+        
+            if code:
+                flag_html = f'<img src="https://flagcdn.com/24x18/{code}.png" style="width:24px; height:18px; object-fit:cover; border-radius:2px;">'
+            else:
+                flag_html = ""
+        
+            land_naam = team.upper() if normalize_text(team) == "nederland" else team
+            land_kleur = "#FF8C00" if normalize_text(team) == "nederland" else "black"
+        
             table_data.append({
                 "NR": i,
-                "Land": team,
+                "Land": f'<span style="display:flex; align-items:center; gap:6px; color:{land_kleur}; font-weight:700;">{flag_html}{land_naam}</span>',
                 "Pt": stats["punten"],
                 "DS": stats["saldo"],
                 "DV": stats["voor"],
                 "DT": stats["tegen"]
             })
-
+        
         df_mobile = pd.DataFrame(table_data)
-
+        
         st.markdown(
             f"""
             <div class="stand-table">
