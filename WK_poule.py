@@ -791,40 +791,48 @@ else:
                 unsafe_allow_html=True
             )
 
-            st.markdown(
-                style_country(home),
-                unsafe_allow_html=True
-            )
+            col_home1, col_home2 = st.columns([3,1])
 
-            st.number_input(
-                "",
-                min_value=0,
-                max_value=20,
-                step=1,
-                value=None,
-                placeholder="",
-                key=f"{match_id}_home"
-            )
+            with col_home1:
+                st.markdown(
+                    style_country(home),
+                    unsafe_allow_html=True
+                )
+            
+            with col_home2:
+                st.number_input(
+                    "",
+                    min_value=0,
+                    max_value=20,
+                    step=1,
+                    value=None,
+                    placeholder="",
+                    key=f"{match_id}_home"
+                )
 
             st.markdown(
                 "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
                 unsafe_allow_html=True
             )
 
-            st.markdown(
-                style_country(away),
-                unsafe_allow_html=True
-            )
+            col_away1, col_away2 = st.columns([3,1])
 
-            st.number_input(
-                "",
-                min_value=0,
-                max_value=20,
-                step=1,
-                value=None,
-                placeholder="",
-                key=f"{match_id}_away"
-            )
+            with col_away1:
+                st.markdown(
+                    style_country(away),
+                    unsafe_allow_html=True
+                )
+            
+            with col_away2:
+                st.number_input(
+                    "",
+                    min_value=0,
+                    max_value=20,
+                    step=1,
+                    value=None,
+                    placeholder="",
+                    key=f"{match_id}_away"
+                )
 
             st.markdown("</div>", unsafe_allow_html=True)
 
