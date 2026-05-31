@@ -721,12 +721,199 @@ if weergave == "Computer":
                 unsafe_allow_html=True
             )
 
+# Mobiele versie poulefase
 else:
 
-    st.info(
-        "📱 Mobiele versie wordt binnenkort toegevoegd. "
-        "Gebruik voorlopig de computerweergave."
-    )
+    for poule in sorted(poules.keys()):
+
+        st.markdown(
+            f"""
+            <div style="
+                background: linear-gradient(90deg,#002B5C,#004B8D);
+                padding:10px;
+                border-radius:10px;
+                text-align:center;
+                margin-top:15px;
+                margin-bottom:10px;
+                border:1px solid #D4AF37;
+            ">
+                <span style="
+                    color:white;
+                    font-size:18px;
+                    font-weight:800;
+                ">
+                    Poule {poule}
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        standen[poule] = {}
+
+        wedstrijden_sorted = sorted(
+            poules[poule],
+            key=lambda x: x.get("Ronde", 0)
+        )
+
+        for wedstrijd in wedstrijden_sorted:
+
+            home = clean_team(wedstrijd["home_team"])
+            away = clean_team(wedstrijd["away_team"])
+            match_id = wedstrijd["match_id"]
+            ronde = wedstrijd.get("Ronde", "")
+
+            for team in [home, away]:
+
+                if team not in standen[poule]:
+                    standen[poule][team] = {
+                        "punten": 0,
+                        "gespeeld": 0,
+                        "voor": 0,
+                        "tegen": 0,
+                        "saldo": 0
+                    }
+
+            st.markdown(
+                f"""
+                <div style="
+                    background:rgba(255,255,255,0.08);
+                    border:1px solid rgba(255,255,255,0.25);
+                    border-radius:14px;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
+                    <div style="
+                        color:#FFD36A;
+                        font-weight:900;
+                        margin-bottom:8px;
+                    ">
+                        {ronde}
+                    </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                style_country(home),
+                unsafe_allow_html=True
+            )
+
+            st.number_input(
+                "",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                key=f"{match_id}_home"
+            )
+
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                style_country(away),
+                unsafe_allow_html=True
+            )
+
+            st.number_input(
+                "",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                key=f"{match_id}_away"
+            )
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            home_score = st.session_state.get(f"{match_id}_home")
+            away_score = st.session_state.get(f"{match_id}_away")
+
+            if home_score is not None and away_score is not None:
+
+                standen[poule][home]["gespeeld"] += 1
+                standen[poule][away]["gespeeld"] += 1
+
+                standen[poule][home]["voor"] += home_score
+                standen[poule][home]["tegen"] += away_score
+
+                standen[poule][away]["voor"] += away_score
+                standen[poule][away]["tegen"] += home_score
+
+                standen[poule][home]["saldo"] = (
+                    standen[poule][home]["voor"]
+                    - standen[poule][home]["tegen"]
+                )
+
+                standen[poule][away]["saldo"] = (
+                    standen[poule][away]["voor"]
+                    - standen[poule][away]["tegen"]
+                )
+
+                if home_score > away_score:
+                    standen[poule][home]["punten"] += 3
+
+                elif away_score > home_score:
+                    standen[poule][away]["punten"] += 3
+
+                else:
+                    standen[poule][home]["punten"] += 1
+                    standen[poule][away]["punten"] += 1
+
+        h2h = head_to_head(
+            list(standen[poule].keys()),
+            poules[poule]
+        )
+
+        def final_sort(item):
+
+            team, stats = item
+            h = h2h[team]
+
+            return (
+                stats["punten"],
+                stats["saldo"],
+                stats["voor"],
+                h["punten"],
+                h["saldo"],
+                h["voor"]
+            )
+
+        ranking = sorted(
+            standen[poule].items(),
+            key=final_sort,
+            reverse=True
+        )
+
+        st.markdown(
+            f"""
+            <div style="
+                background:linear-gradient(90deg,#002B5C,#004B8D);
+                padding:10px;
+                border-radius:10px;
+                text-align:center;
+                margin-top:10px;
+                margin-bottom:10px;
+                border:1px solid #D4AF37;
+            ">
+                <span style="
+                    color:white;
+                    font-size:17px;
+                    font-weight:800;
+                ">
+                    Stand Poule {poule}
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        toon_stand_tabel(poule, ranking)
 
 # Stap .. : Opmaak 16e FINALE
 # _______________________________________________________________________________________________________
