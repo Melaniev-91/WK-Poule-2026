@@ -2086,128 +2086,261 @@ def alles_ingevuld():
 
     return True
 
-
 # =================================================================================
 # VOORSPELLINGEN VOOR PDF MAKEN
 # =================================================================================
 
 def maak_voorspellingen_pdf():
 
-    voorspellingen_pdf = []
+    return {
+        "poules": poules,
+        "standen": standen
+    }
 
-    # Poulefase
-    for poule in poules.values():
-        for wedstrijd in poule:
+
+# =================================================================================
+# PDF MAKEN
+# =================================================================================
+
+def maak_pool_pdf(user, voorspellingen_pdf):
+
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    margin = 36
+    y = height - 45
+
+    def nieuwe_pagina():
+        p.showPage()
+        return height - 45
+
+    def fase_header(titel, y):
+        if y < 90:
+            y = nieuwe_pagina()
+
+        p.setFillColorRGB(0.42, 0.32, 0.80)
+        p.roundRect(margin, y - 8, width - 2 * margin, 26, 8, fill=1, stroke=0)
+
+        p.setFillColorRGB(1, 1, 1)
+        p.setFont("Helvetica-Bold", 13)
+        p.drawString(margin + 10, y, titel)
+
+        p.setFillColorRGB(0, 0, 0)
+        return y - 35
+
+    def poule_subkop(titel, y):
+        if y < 100:
+            y = nieuwe_pagina()
+
+        p.setFont("Helvetica-Bold", 11)
+        p.setFillColorRGB(0.05, 0.20, 0.45)
+        p.drawString(margin, y, titel)
+        p.setFillColorRGB(0, 0, 0)
+
+        return y - 18
+
+    def normale_tekst(tekst, x, y, bold=False, size=9):
+        p.setFont("Helvetica-Bold" if bold else "Helvetica", size)
+        p.drawString(x, y, str(tekst))
+
+    def check_y(y):
+        if y < 70:
+            return nieuwe_pagina()
+        return y
+
+    # Titel
+    p.setFont("Helvetica-Bold", 18)
+    p.drawString(margin, y, f"WK Poule 2026 - {user}")
+    y -= 35
+
+    # =================================================================================
+    # POULEFASE
+    # =================================================================================
+
+    y = fase_header("Poulefase", y)
+
+    for poule_letter in sorted(poules.keys()):
+
+        y = check_y(y)
+        y = poule_subkop(f"Poule {poule_letter}", y)
+
+        wedstrijden_poule = sorted(
+            poules[poule_letter],
+            key=lambda x: x.get("Ronde", 0)
+        )
+
+        start_y = y
+
+        # Linkerkant: wedstrijden
+        normale_tekst("Wedstrijden", margin, y, bold=True)
+        y -= 15
+
+        for wedstrijd in wedstrijden_poule:
+
             match_id = wedstrijd["match_id"]
 
-            voorspellingen_pdf.append({
-                "Fase": "Poule",
-                "home_team": wedstrijd["home_team"],
-                "away_team": wedstrijd["away_team"],
-                "home_score": st.session_state.get(f"{match_id}_home"),
-                "away_score": st.session_state.get(f"{match_id}_away")
-            })
+            home_team = wedstrijd["home_team"]
+            away_team = wedstrijd["away_team"]
+
+            home_score = st.session_state.get(f"{match_id}_home")
+            away_score = st.session_state.get(f"{match_id}_away")
+
+            regel = f"{home_team} {home_score} - {away_score} {away_team}"
+
+            normale_tekst(regel, margin, y)
+            y -= 14
+
+            if y < 80:
+                y = nieuwe_pagina()
+
+        einde_wedstrijden_y = y
+
+        # Rechterkant: stand
+        stand_x = 360
+        stand_y = start_y
+
+        normale_tekst("Stand", stand_x, stand_y, bold=True)
+        stand_y -= 15
+
+        normale_tekst("Nr", stand_x, stand_y, bold=True)
+        normale_tekst("Land", stand_x + 25, stand_y, bold=True)
+        normale_tekst("Pt", stand_x + 125, stand_y, bold=True)
+        normale_tekst("DS", stand_x + 155, stand_y, bold=True)
+        normale_tekst("DV", stand_x + 185, stand_y, bold=True)
+        stand_y -= 12
+
+        ranking = get_poule_ranking(poule_letter)
+
+        for nr, (team, stats) in enumerate(ranking, start=1):
+
+            normale_tekst(nr, stand_x, stand_y)
+            normale_tekst(team, stand_x + 25, stand_y)
+            normale_tekst(stats["punten"], stand_x + 125, stand_y)
+            normale_tekst(stats["saldo"], stand_x + 155, stand_y)
+            normale_tekst(stats["voor"], stand_x + 185, stand_y)
+
+            stand_y -= 13
+
+        y = min(einde_wedstrijden_y, stand_y) - 16
+
+    # =================================================================================
+    # KNOCK-OUT FASES
+    # =================================================================================
+
+    def knockout_regel(fase, home_team, away_team, home_score, away_score, winner, y):
+        y = check_y(y)
+
+        regel = f"{home_team} {home_score} - {away_score} {away_team}"
+
+        if winner and winner != "Nog niet bekend":
+            regel += f" | Door: {winner}"
+
+        normale_tekst(regel, margin, y)
+        return y - 14
 
     # 16e finale
+    y = fase_header("16e finale", y)
+
     for i, match in enumerate(matches):
         match_id = match_number_map[i]
 
-        voorspellingen_pdf.append({
-            "Fase": "16e Finale",
-            "home_team": round16_teams.get(match[0], "Nog niet bekend"),
-            "away_team": round16_teams.get(match[1], "Nog niet bekend"),
-            "home_score": st.session_state.get(f"{match_id}_home"),
-            "away_score": st.session_state.get(f"{match_id}_away"),
-            "winner": get_16e_winner(match_id)
-        })
+        y = knockout_regel(
+            "16e Finale",
+            round16_teams.get(match[0], "Nog niet bekend"),
+            round16_teams.get(match[1], "Nog niet bekend"),
+            st.session_state.get(f"{match_id}_home"),
+            st.session_state.get(f"{match_id}_away"),
+            get_16e_winner(match_id),
+            y
+        )
 
     # 8e finale
+    y = fase_header("8e finale", y)
+
     for match in eighth_matches:
         match_id = match[2]
 
-        voorspellingen_pdf.append({
-            "Fase": "8e Finale",
-            "home_team": resolve_eighth_team(match[0]),
-            "away_team": resolve_eighth_team(match[1]),
-            "home_score": st.session_state.get(f"eighth_home_{match_id}"),
-            "away_score": st.session_state.get(f"eighth_away_{match_id}"),
-            "winner": get_eighth_winner(match_id)
-        })
+        y = knockout_regel(
+            "8e Finale",
+            resolve_eighth_team(match[0]),
+            resolve_eighth_team(match[1]),
+            st.session_state.get(f"eighth_home_{match_id}"),
+            st.session_state.get(f"eighth_away_{match_id}"),
+            get_eighth_winner(match_id),
+            y
+        )
 
     # Kwartfinale
+    y = fase_header("Kwartfinales", y)
+
     for match in quarter_matches:
         match_id = match[2]
 
-        voorspellingen_pdf.append({
-            "Fase": "Kwartfinale",
-            "home_team": resolve_quarter_team(match[0]),
-            "away_team": resolve_quarter_team(match[1]),
-            "home_score": st.session_state.get(f"qf_home_{match_id}"),
-            "away_score": st.session_state.get(f"qf_away_{match_id}"),
-            "winner": get_quarter_winner(match_id)
-        })
+        y = knockout_regel(
+            "Kwartfinale",
+            resolve_quarter_team(match[0]),
+            resolve_quarter_team(match[1]),
+            st.session_state.get(f"qf_home_{match_id}"),
+            st.session_state.get(f"qf_away_{match_id}"),
+            get_quarter_winner(match_id),
+            y
+        )
 
     # Halve finale
+    y = fase_header("Halve finales", y)
+
     for match in semi_matches:
         match_id = match[2]
 
-        voorspellingen_pdf.append({
-            "Fase": "Halve finale",
-            "home_team": resolve_semi_team(match[0]),
-            "away_team": resolve_semi_team(match[1]),
-            "home_score": st.session_state.get(f"sf_home_{match_id}"),
-            "away_score": st.session_state.get(f"sf_away_{match_id}"),
-            "winner": get_semi_winner(match_id)
-        })
+        y = knockout_regel(
+            "Halve finale",
+            resolve_semi_team(match[0]),
+            resolve_semi_team(match[1]),
+            st.session_state.get(f"sf_home_{match_id}"),
+            st.session_state.get(f"sf_away_{match_id}"),
+            get_semi_winner(match_id),
+            y
+        )
 
     # Finale
+    y = fase_header("Finale", y)
+
     for match in final_matches:
         match_id = match[2]
 
-        voorspellingen_pdf.append({
-            "Fase": "Finale",
-            "home_team": resolve_final_team(match[0]),
-            "away_team": resolve_final_team(match[1]),
-            "home_score": st.session_state.get(f"final_home_{match_id}"),
-            "away_score": st.session_state.get(f"final_away_{match_id}"),
-            "winner": get_final_winner(match_id)
-        })
+        y = knockout_regel(
+            "Finale",
+            resolve_final_team(match[0]),
+            resolve_final_team(match[1]),
+            st.session_state.get(f"final_home_{match_id}"),
+            st.session_state.get(f"final_away_{match_id}"),
+            get_final_winner(match_id),
+            y
+        )
 
-    # Bonusvragen
-    voorspellingen_pdf.append({
-        "Fase": "Bonusvragen",
-        "home_team": "Gele kaarten",
-        "away_team": "",
-        "home_score": st.session_state.get("bonus_gele_kaarten"),
-        "away_score": ""
-    })
+    # =================================================================================
+    # BONUSVRAGEN
+    # =================================================================================
 
-    voorspellingen_pdf.append({
-        "Fase": "Bonusvragen",
-        "home_team": "Rode kaarten",
-        "away_team": "",
-        "home_score": st.session_state.get("bonus_rode_kaarten"),
-        "away_score": ""
-    })
+    y = fase_header("Bonusvragen", y)
 
-    voorspellingen_pdf.append({
-        "Fase": "Bonusvragen",
-        "home_team": "Doelpunten",
-        "away_team": "",
-        "home_score": st.session_state.get("bonus_doelpunten"),
-        "away_score": ""
-    })
+    bonusregels = [
+        ("Totaal aantal gele kaarten", st.session_state.get("bonus_gele_kaarten")),
+        ("Totaal aantal rode kaarten", st.session_state.get("bonus_rode_kaarten")),
+        ("Totaal aantal doelpunten", st.session_state.get("bonus_doelpunten")),
+        ("Topscorer", st.session_state.get("bonus_topscorer")),
+    ]
 
-    voorspellingen_pdf.append({
-        "Fase": "Bonusvragen",
-        "home_team": "Topscorer",
-        "away_team": "",
-        "home_score": st.session_state.get("bonus_topscorer"),
-        "away_score": ""
-    })
+    for vraag, antwoord in bonusregels:
+        y = check_y(y)
+        normale_tekst(f"{vraag}: {antwoord}", margin, y)
+        y -= 15
 
-    return voorspellingen_pdf
+    p.save()
+    buffer.seek(0)
 
+    return buffer
 
 # =================================================================================
 # MELDINGEN IN EIGEN STIJL
@@ -2253,51 +2386,6 @@ def toon_success_bericht(tekst):
         ✓ &nbsp; {tekst}
     </div>
     """, unsafe_allow_html=True)
-
-# =================================================================================
-# PDF MAKEN
-# =================================================================================
-
-def maak_pool_pdf(user, voorspellingen_pdf):
-
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
-
-    y = height - 50
-
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(50, y, f"WK Poule 2026 - {user}")
-    y -= 35
-
-    p.setFont("Helvetica", 10)
-
-    for voorspelling in voorspellingen_pdf:
-
-        if y < 60:
-            p.showPage()
-            y = height - 50
-            p.setFont("Helvetica", 10)
-
-        fase = voorspelling.get("Fase", "")
-        home_team = voorspelling.get("home_team", "")
-        away_team = voorspelling.get("away_team", "")
-        home_score = voorspelling.get("home_score", "")
-        away_score = voorspelling.get("away_score", "")
-        winner = voorspelling.get("winner", "")
-
-        regel = f"{fase}: {home_team} {home_score} - {away_score} {away_team}"
-
-        if winner:
-            regel += f" | winnaar: {winner}"
-
-        p.drawString(50, y, regel)
-        y -= 18
-
-    p.save()
-    buffer.seek(0)
-
-    return buffer
 
 # =================================================================================
 # BUTTON STYLING
