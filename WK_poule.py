@@ -818,7 +818,7 @@ else:
                 unsafe_allow_html=True
             )
 
-            col_away1, col_away2 = st.columns([4,1]), vertical_alignment="center")
+            col_away1, col_away2 = st.columns([4,1], vertical_alignment="center")
 
             with col_away1:
                 st.markdown(
