@@ -926,10 +926,13 @@ else:
 
         df_mobile = pd.DataFrame(table_data)
 
-        st.dataframe(
-            df_mobile,
-            use_container_width=True,
-            hide_index=True
+        st.markdown(
+            f"""
+            <div class="stand-table">
+                {df_mobile.to_html(index=False, escape=False)}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
 # Stap .. : Opmaak 16e FINALE
