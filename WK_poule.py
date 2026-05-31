@@ -754,7 +754,7 @@ else:
             poules[poule],
             key=lambda x: x.get("Ronde", 0)
         )
-                huidige_ronde = None
+        huidige_ronde = None
         wedstrijd_teller = 0
 
         for wedstrijd in wedstrijden_sorted:
