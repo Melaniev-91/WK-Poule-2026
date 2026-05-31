@@ -911,45 +911,26 @@ else:
             unsafe_allow_html=True
         )
 
-        for positie, (team, stats) in enumerate(ranking, start=1):
+        table_data = []
 
-            if positie == 1:
-                icoon = "🥇"
+        for i, (team, stats) in enumerate(ranking, start=1):
 
-            elif positie == 2:
-                icoon = "🥈"
+            table_data.append({
+                "NR": i,
+                "Land": team,
+                "Pt": stats["punten"],
+                "DS": stats["saldo"],
+                "DV": stats["voor"],
+                "DT": stats["tegen"]
+            })
 
-            elif positie == 3:
-                icoon = "🥉"
+        df_mobile = pd.DataFrame(table_data)
 
-            else:
-                icoon = f"{positie}."
-
-            st.markdown(
-                f"""
-                <div style="
-                    background:white;
-                    border-radius:10px;
-                    padding:10px;
-                    margin-bottom:6px;
-                ">
-                    <div style="
-                        font-weight:800;
-                        font-size:15px;
-                    ">
-                        {icoon} {team} &nbsp;&nbsp; {stats["punten"]} pt
-                    </div>
-
-                    <div style="
-                        font-size:13px;
-                        color:#555;
-                    ">
-                        DS {stats["saldo"]:+} | DV {stats["voor"]} | DT {stats["tegen"]}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        st.dataframe(
+            df_mobile,
+            use_container_width=True,
+            hide_index=True
+        )
 
 # Stap .. : Opmaak 16e FINALE
 # _______________________________________________________________________________________________________
