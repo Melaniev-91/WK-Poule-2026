@@ -13,9 +13,9 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import pandas as pd
 
-# _______________________________________________________________________________________________________
-# Firebase database connectie maken
-# _______________________________________________________________________________________________________
+# =======================================================================================================
+# FIREBASE DATABASE CONNECTIE MAKEN 
+# =======================================================================================================
 
 firebase_config = dict(st.secrets["firebase"])
 
@@ -26,13 +26,17 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
-# _______________________________________________________________________________________________________
-# >>>>>>>>>>STREANMLIT: WK POULE APP BOUWEN<<<<<<<<<<
-# _______________________________________________________________________________________________________
+# =======================================================================================================
+# APP | OPMAAK/ LAY-OUT VD APP
+# =======================================================================================================
 
+# _______________________________________________________________________________________________________
 # Stap 1: User Interface Start
+# _______________________________________________________________________________________________________
 
 # Stap 1.1 Pagina breedte
+# -------------------------------------------------------------------------------------------------------
+
 st.set_page_config(layout="wide")
 
 st.markdown("""
@@ -47,7 +51,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Stap 1.2 Achtergrond kleur pagina
-# Stap 1.2 Achtergrond kleur pagina
+# -------------------------------------------------------------------------------------------------------
+
 st.markdown("""
 <style>
 .stApp {
@@ -56,7 +61,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Stap 1.3 BANNER
+# Stap 1.3 Hoofdbanner (bovenaan pagina)
+# -------------------------------------------------------------------------------------------------------
+
 st.markdown("""
 <style>
 
@@ -111,9 +118,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# =================================================================================
-# WEERGAVE KEUZE: COMPUTER / MOBIEL
-# =================================================================================
+# Stap 1.4: Weergave keuze: Computer of mobiel
+# -------------------------------------------------------------------------------------------------------
 
 st.markdown("""
 <style>
@@ -169,7 +175,9 @@ weergave = st.radio(
     label_visibility="collapsed"
 )
 
-# Stap 1.4 Algemene spacing & input styling
+# Stap 1.5 Algemene spacing & input styling
+# -------------------------------------------------------------------------------------------------------
+
 st.markdown("""
 <style>
 
@@ -196,7 +204,9 @@ div[data-testid="stMarkdownContainer"] {
 </style>
 """, unsafe_allow_html=True)
 
-# Stap 1.5 Naam invullen
+# Stap 1.6 Naam invullen
+# -------------------------------------------------------------------------------------------------------
+
 st.markdown("""
 <style>
 
@@ -211,11 +221,12 @@ div[data-testid="stTextInput"] p {
 
 user = st.text_input("Vul hier je naam in")
 
-
-# Stap 2: LANDEN OPMAKEN
+# _______________________________________________________________________________________________________
+# Stap 2: OPMAAK WEERGAVE LANDEN 
 # _______________________________________________________________________________________________________
 
-# Stap 2.1.1 Functie Tekst normaliseren van landen (letten op bijv spaties)
+# Stap 2.1 Functie Tekst normaliseren van landen (letten op bijv spaties)
+# -------------------------------------------------------------------------------------------------------
 def normalize_text(text):
 
     text = text.strip()
@@ -226,11 +237,13 @@ def normalize_text(text):
 
     return text.lower()
 
-# Stap 2.1.2 Functie Teamnamen (landen) opschonen
+# Stap 2.2 Functie Teamnamen (landen) opschonen
+# -------------------------------------------------------------------------------------------------------
 def clean_team(team):
     return unicodedata.normalize('NFKC', team).strip()
 
-# Stap 2.1.3 Vlaggenlijst maken
+# Stap 2.3 Vlaggenlijst maken
+# -------------------------------------------------------------------------------------------------------
 def country_code(team):
     codes = {
         "nederland": "nl",
@@ -299,7 +312,8 @@ def country_code(team):
 
     return codes.get(normalize_text(team))
 
-
+# Stap 2.4 ....
+# -------------------------------------------------------------------------------------------------------
 def style_country(team):
 
     code = country_code(team)
@@ -335,12 +349,12 @@ def style_country(team):
     </span>
     """
 
-# Stap 3: WEDSTRIJDEN OPHALEN FIRESTORE
-# _______________________________________________________________________________________________________
+# =======================================================================================================
+# FIREBASE | WEDSTRIJDEN DATA (POULEFASE) OPHALEN UIT FIRESTORE (FIREBASE)
+# =======================================================================================================
 
 wedstrijden = db.collection("Wedstrijden").stream()
 
-# Stap 3.1 Structuur per poule maken
 poules = {}
 
 for w in wedstrijden:
@@ -364,9 +378,9 @@ for w in wedstrijden:
             key=lambda x: x["Ronde"]
         )
 
-
-# Stap 4: UI PER POULE
-# _______________________________________________________________________________________________________
+# =======================================================================================================
+# APP | POULEFASE
+# =======================================================================================================
 
 # Stap 4.1 De + - weghalen achter de invoervelden
 st.markdown("""
@@ -1005,10 +1019,14 @@ else:
             unsafe_allow_html=True
         )
 
-# Stap .. : Opmaak 16e FINALE
+# =======================================================================================================
+# APP | 16e FINALE
+# =======================================================================================================
+
+# _______________________________________________________________________________________________________
+# Stap 1: Banner 16e finale
 # _______________________________________________________________________________________________________
 
-# Placeholder Banner 16e finale
 st.markdown("""
         <style>
         .knockout-banner {
@@ -1035,13 +1053,9 @@ st.markdown("""
         </div>
         """, unsafe_allow_html=True)
 
-# =====================================================================================
-# 16e FINALE
-# =====================================================================================
-
-# =====================================================================================
-# MATCHES
-# =====================================================================================
+# _______________________________________________________________________________________________________
+# Stap 2: Plaatstoekenning wedstrijden
+# _______________________________________________________________________________________________________
 
 matches = [
     ("A", "B"),
@@ -1062,7 +1076,10 @@ matches = [
     ("AE", "AF"),
 ]
 
-# Officieel Wedstrijdnummer (FIFA)
+# _______________________________________________________________________________________________________
+# Stap 3: Officiel Wedstrijdnr FIFA
+# _______________________________________________________________________________________________________
+
 match_number_map = {
     0: 73,
     1: 76,
@@ -1417,134 +1434,235 @@ def toon_winnaar_bij_gelijk(match_id, home_team, away_team, home_key, away_key, 
 # UI 16e FINALE
 # =====================================================================================
 
-for row in range(0, len(matches), 2):
-
-    match1 = matches[row]
-    match2 = matches[row + 1]
-
-    match1_id = match_number_map[row]
-    match2_id = match_number_map[row + 1]
-
-    (
-        col1, col2, col3, col4, col5,
-        spacer,
-        col6, col7, col8, col9, col10
-    ) = st.columns(
-        [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
-        vertical_alignment="center"
-    )
-
-    # MATCH 1
-    home1 = round16_teams.get(match1[0], "Nog niet bekend")
-    away1 = round16_teams.get(match1[1], "Nog niet bekend")
-
-    with col1:
-        st.markdown(style_country(home1), unsafe_allow_html=True)
-
-    with col2:
-        st.number_input(
-            "",
-            key=f"{match1_id}_home",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+if weergave == "Computer":
+    for row in range(0, len(matches), 2):
+    
+        match1 = matches[row]
+        match2 = matches[row + 1]
+    
+        match1_id = match_number_map[row]
+        match2_id = match_number_map[row + 1]
+    
+        (
+            col1, col2, col3, col4, col5,
+            spacer,
+            col6, col7, col8, col9, col10
+        ) = st.columns(
+            [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
+            vertical_alignment="center"
+        )
+    
+        # MATCH 1
+        home1 = round16_teams.get(match1[0], "Nog niet bekend")
+        away1 = round16_teams.get(match1[1], "Nog niet bekend")
+    
+        with col1:
+            st.markdown(style_country(home1), unsafe_allow_html=True)
+    
+        with col2:
+            st.number_input(
+                "",
+                key=f"{match1_id}_home",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        with col3:
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+    
+        with col4:
+            st.markdown(style_country(away1), unsafe_allow_html=True)
+    
+        with col5:
+            st.number_input(
+                "",
+                key=f"{match1_id}_away",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        # MATCH 2
+        home2 = round16_teams.get(match2[0], "Nog niet bekend")
+        away2 = round16_teams.get(match2[1], "Nog niet bekend")
+    
+        with col6:
+            st.markdown(style_country(home2), unsafe_allow_html=True)
+    
+        with col7:
+            st.number_input(
+                "",
+                key=f"{match2_id}_home",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        with col8:
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+    
+        with col9:
+            st.markdown(style_country(away2), unsafe_allow_html=True)
+    
+        with col10:
+            st.number_input(
+                "",
+                key=f"{match2_id}_away",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        # GELIJKSPEL KEUZES ONDER DE JUISTE WEDSTRIJD
+        tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
+    
+        with tie_col1:
+            toon_winnaar_bij_gelijk(
+                match1_id,
+                home1,
+                away1,
+                f"{match1_id}_home",
+                f"{match1_id}_away",
+                f"r16_winner_{match1_id}"
+            )
+    
+        with tie_col2:
+            toon_winnaar_bij_gelijk(
+                match2_id,
+                home2,
+                away2,
+                f"{match2_id}_home",
+                f"{match2_id}_away",
+                f"r16_winner_{match2_id}"
+            )
+    
+        st.markdown(
+            "<div style='height:8px;'></div>",
+            unsafe_allow_html=True
         )
 
-    with col3:
+# Mobiele weergave
+else:
+
+    for i, match in enumerate(matches):
+
+        match_id = match_number_map[i]
+
+        home = round16_teams.get(match[0], "Nog niet bekend")
+        away = round16_teams.get(match[1], "Nog niet bekend")
+
+        # FIFA wedstrijdnummer banner
+        st.markdown(
+            f"""
+            <div style="
+                background: linear-gradient(90deg,#FFD36A,#FFC94D);
+                color:#002B5C;
+                font-weight:900;
+                text-align:center;
+                padding:10px;
+                border-radius:10px;
+                margin-top:12px;
+                margin-bottom:8px;
+                border:2px solid #D4AF37;
+                box-shadow:0px 3px 8px rgba(0,0,0,0.20);
+                font-size:16px;
+            ">
+                Wedstrijd {match_id}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Thuisploeg
+        col_home1, col_home2 = st.columns(
+            [4,1],
+            vertical_alignment="center"
+        )
+
+        with col_home1:
+            st.markdown(
+                style_country(home),
+                unsafe_allow_html=True
+            )
+
+        with col_home2:
+            st.number_input(
+                "",
+                key=f"{match_id}_home",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+
         st.markdown(
             "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
             unsafe_allow_html=True
         )
 
-    with col4:
-        st.markdown(style_country(away1), unsafe_allow_html=True)
-
-    with col5:
-        st.number_input(
-            "",
-            key=f"{match1_id}_away",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Uitploeg
+        col_away1, col_away2 = st.columns(
+            [4,1],
+            vertical_alignment="center"
         )
 
-    # MATCH 2
-    home2 = round16_teams.get(match2[0], "Nog niet bekend")
-    away2 = round16_teams.get(match2[1], "Nog niet bekend")
+        with col_away1:
+            st.markdown(
+                style_country(away),
+                unsafe_allow_html=True
+            )
 
-    with col6:
-        st.markdown(style_country(home2), unsafe_allow_html=True)
+        with col_away2:
+            st.number_input(
+                "",
+                key=f"{match_id}_away",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
 
-    with col7:
-        st.number_input(
-            "",
-            key=f"{match2_id}_home",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Gelijkspel keuze
+        toon_winnaar_bij_gelijk(
+            match_id,
+            home,
+            away,
+            f"{match_id}_home",
+            f"{match_id}_away",
+            f"r16_winner_{match_id}"
         )
 
-    with col8:
+        # Altijd dezelfde ruimte tussen wedstrijden
         st.markdown(
-            "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+            "<div style='height:12px;'></div>",
             unsafe_allow_html=True
         )
-
-    with col9:
-        st.markdown(style_country(away2), unsafe_allow_html=True)
-
-    with col10:
-        st.number_input(
-            "",
-            key=f"{match2_id}_away",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
-        )
-
-    # GELIJKSPEL KEUZES ONDER DE JUISTE WEDSTRIJD
-    tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
-
-    with tie_col1:
-        toon_winnaar_bij_gelijk(
-            match1_id,
-            home1,
-            away1,
-            f"{match1_id}_home",
-            f"{match1_id}_away",
-            f"r16_winner_{match1_id}"
-        )
-
-    with tie_col2:
-        toon_winnaar_bij_gelijk(
-            match2_id,
-            home2,
-            away2,
-            f"{match2_id}_home",
-            f"{match2_id}_away",
-            f"r16_winner_{match2_id}"
-        )
-
-    st.markdown(
-        "<div style='height:8px;'></div>",
-        unsafe_allow_html=True
-    )
-
-# =====================================================================================
-# 8e FINALE (OUTPUT)
-# =====================================================================================
+# =======================================================================================================
+# APP | 8e FINALE
+# =======================================================================================================
 
 eighth_matches = [
     (73, 75, 90),
@@ -1735,10 +1853,9 @@ for row in range(0, len(eighth_matches), 2):
 
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
-
-# =====================================================================================
-# KWARTFINALE
-# =====================================================================================
+# =======================================================================================================
+# APP | KWARTFINALE
+# =======================================================================================================
 
 quarter_matches = [
     (89, 90, 97),
@@ -1746,7 +1863,6 @@ quarter_matches = [
     (91, 92, 99),
     (95, 96, 100),
 ]
-
 
 # =====================================================================================
 # RESOLVE WINNER UIT 8E FINALE
@@ -1771,14 +1887,12 @@ def get_eighth_winner(match_id):
         away_team
     )
 
-
 # =====================================================================================
 # RESOLVE KWARTFINALE TEAM
 # =====================================================================================
 
 def resolve_quarter_team(match_id):
     return get_eighth_winner(match_id)
-
 
 # =====================================================================================
 # UI KWARTFINALE
@@ -1946,9 +2060,9 @@ def get_quarter_winner(match_id):
         away_team
     )
 
-# =====================================================================================
-# HALVE FINALE
-# =====================================================================================
+# =======================================================================================================
+# APP | HALVE FINALE
+# =======================================================================================================
 
 semi_matches = [
     (97, 98, 101),
@@ -2080,9 +2194,9 @@ def get_semi_winner(match_id):
         away_team
     )
 
-# =====================================================================================
-# FINALE
-# =====================================================================================
+# =======================================================================================================
+# APP | FINALE
+# =======================================================================================================
 
 final_matches = [
     (101, 102, 103),
@@ -2200,9 +2314,9 @@ def get_final_winner(match_id):
         away
     )
 
-# =====================================================================================
-# BONUSVRAGEN
-# =====================================================================================
+# =======================================================================================================
+# APP | BONUSVRAGEN
+# =======================================================================================================
 
 st.markdown("""
 <div style="
@@ -2316,6 +2430,10 @@ topscorer = st.text_input(
     placeholder="Naam speler",
     label_visibility="collapsed"
 )
+
+# =======================================================================================================
+# APP | PDF MAKEN
+# =======================================================================================================
 
 # =================================================================================
 # CONTROLEREN OF ALLES IS INGEVULD
@@ -2786,6 +2904,9 @@ div[data-testid="stDownloadButton"] > button:active {
 </style>
 """, unsafe_allow_html=True)
 
+# =======================================================================================================
+# APP | VERSTUREN VAN GEGEVENS
+# =======================================================================================================
 # =================================================================================
 # DOWNLOAD BUTTON
 # =================================================================================
@@ -3051,4 +3172,4 @@ if st.button("Klaar en verzenden naar organisatie", key="save_all"):
             unsafe_allow_html=True
         )
 
-        toon_success_bericht("Alle voorspellingen opgeslagen!")
+        toon_success_bericht("Alle voorspellingen opgestuurd naar de organisatie!")
