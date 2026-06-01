@@ -2887,7 +2887,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
         p.drawString(margin + 10, y, titel)
 
         p.setFillColorRGB(0, 0, 0)
-        return y - 35
+        return y - 50
 
     def poule_subkop(titel, y):
         if y < 100:
@@ -2932,57 +2932,57 @@ def maak_pool_pdf(user, voorspellingen_pdf):
 
         start_y = y
 
-        # Linkerkant: wedstrijden
+       # Wedstrijden
         normale_tekst("Wedstrijden", margin, y, bold=True)
         y -= 15
-
+        
         for wedstrijd in wedstrijden_poule:
-
+        
             match_id = wedstrijd["match_id"]
-
+        
             home_team = wedstrijd["home_team"]
             away_team = wedstrijd["away_team"]
-
+        
             home_score = st.session_state.get(f"{match_id}_home")
             away_score = st.session_state.get(f"{match_id}_away")
-
+        
             regel = f"{home_team} {home_score} - {away_score} {away_team}"
-
+        
             normale_tekst(regel, margin, y)
             y -= 14
-
-            if y < 80:
-                y = nieuwe_pagina()
-
-        einde_wedstrijden_y = y
-
-        # Rechterkant: stand
-        stand_x = 360
-        stand_y = start_y
-
-        normale_tekst("Stand", stand_x, stand_y, bold=True)
-        stand_y -= 15
-
-        normale_tekst("Nr", stand_x, stand_y, bold=True)
-        normale_tekst("Land", stand_x + 25, stand_y, bold=True)
-        normale_tekst("Pt", stand_x + 125, stand_y, bold=True)
-        normale_tekst("DS", stand_x + 155, stand_y, bold=True)
-        normale_tekst("DV", stand_x + 185, stand_y, bold=True)
-        stand_y -= 12
-
+        
+            y = check_y(y)
+        
+        # ruimte
+        y -= 6
+        
+        # Stand
+        normale_tekst("Stand", margin, y, bold=True)
+        y -= 15
+        
         ranking = get_poule_ranking(poule_letter)
-
+        
+        normale_tekst("Nr", margin, y, bold=True)
+        normale_tekst("Land", margin + 30, y, bold=True)
+        normale_tekst("Pt", margin + 180, y, bold=True)
+        normale_tekst("DS", margin + 210, y, bold=True)
+        normale_tekst("DV", margin + 240, y, bold=True)
+        
+        y -= 14
+        
         for nr, (team, stats) in enumerate(ranking, start=1):
-
-            normale_tekst(nr, stand_x, stand_y)
-            normale_tekst(team, stand_x + 25, stand_y)
-            normale_tekst(stats["punten"], stand_x + 125, stand_y)
-            normale_tekst(stats["saldo"], stand_x + 155, stand_y)
-            normale_tekst(stats["voor"], stand_x + 185, stand_y)
-
-            stand_y -= 13
-
-        y = min(einde_wedstrijden_y, stand_y) - 16
+        
+            normale_tekst(nr, margin, y)
+            normale_tekst(team, margin + 30, y)
+            normale_tekst(stats["punten"], margin + 180, y)
+            normale_tekst(stats["saldo"], margin + 210, y)
+            normale_tekst(stats["voor"], margin + 240, y)
+        
+            y -= 13
+        
+            y = check_y(y)
+        
+        y -= 20
 
     # =================================================================================
     # KNOCK-OUT FASES
@@ -3016,6 +3016,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
         )
 
     # 8e finale
+    y -= 10
     y = fase_header("8e finale", y)
 
     for match in eighth_matches:
@@ -3032,6 +3033,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
         )
 
     # Kwartfinale
+    y -= 10
     y = fase_header("Kwartfinales", y)
 
     for match in quarter_matches:
@@ -3048,6 +3050,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
         )
 
     # Halve finale
+    y -= 10
     y = fase_header("Halve finales", y)
 
     for match in semi_matches:
@@ -3064,6 +3067,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
         )
 
     # Finale
+    y -= 10
     y = fase_header("Finale", y)
 
     for match in final_matches:
@@ -3083,6 +3087,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
     # BONUSVRAGEN
     # =================================================================================
 
+    y -= 10
     y = fase_header("Bonusvragen", y)
 
     bonusregels = [
