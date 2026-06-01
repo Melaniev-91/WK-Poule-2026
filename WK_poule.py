@@ -1715,143 +1715,248 @@ def resolve_eighth_team(value):
 # 8e FINALE UI
 # =====================================================================================
 
-st.markdown("""
-<div style="
-    background: linear-gradient(90deg, #D62828, #F77F00);
-    padding: 14px 20px;
-    border-radius: 12px;
-    margin-top: 25px;
-    margin-bottom: 10px;
-    text-align: center;
-    box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
-">
-    <h2 style="
-        margin:0;
-        color:white;
-        font-size:26px;
-        font-weight:800;
-        letter-spacing:1px;
+# Computerweergave
+if weergave == "Computer":
+
+        # HUIDIGE 8E FINALE CODE
+    st.markdown("""
+    <div style="
+        background: linear-gradient(90deg, #D62828, #F77F00);
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-top: 25px;
+        margin-bottom: 10px;
+        text-align: center;
+        box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
     ">
-        8e finale
-    </h2>
-</div>
-""", unsafe_allow_html=True)
+        <h2 style="
+            margin:0;
+            color:white;
+            font-size:26px;
+            font-weight:800;
+            letter-spacing:1px;
+        ">
+            8e finale
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    
+    for row in range(0, len(eighth_matches), 2):
+    
+        match1 = eighth_matches[row]
+        match2 = eighth_matches[row + 1]
+    
+        col1, col2, col3, col4, col5, spacer, col6, col7, col8, col9, col10 = st.columns(
+            [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
+            vertical_alignment="center"
+        )
+    
+        # MATCH 1
+        home1 = resolve_eighth_team(match1[0])
+        away1 = resolve_eighth_team(match1[1])
+    
+        with col1:
+            st.markdown(style_country(home1), unsafe_allow_html=True)
+    
+        with col2:
+            st.number_input(
+                "",
+                key=f"eighth_home_{match1[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        with col3:
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+    
+        with col4:
+            st.markdown(style_country(away1), unsafe_allow_html=True)
+    
+        with col5:
+            st.number_input(
+                "",
+                key=f"eighth_away_{match1[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        # MATCH 2
+        home2 = resolve_eighth_team(match2[0])
+        away2 = resolve_eighth_team(match2[1])
+    
+        with col6:
+            st.markdown(style_country(home2), unsafe_allow_html=True)
+    
+        with col7:
+            st.number_input(
+                "",
+                key=f"eighth_home_{match2[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        with col8:
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+    
+        with col9:
+            st.markdown(style_country(away2), unsafe_allow_html=True)
+    
+        with col10:
+            st.number_input(
+                "",
+                key=f"eighth_away_{match2[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        # GELIJKSPEL KEUZES
+        tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
+    
+        with tie_col1:
+            toon_winnaar_bij_gelijk(
+                match1[2],
+                home1,
+                away1,
+                f"eighth_home_{match1[2]}",
+                f"eighth_away_{match1[2]}",
+                f"eighth_winner_{match1[2]}"
+            )
+    
+        with tie_col2:
+            toon_winnaar_bij_gelijk(
+                match2[2],
+                home2,
+                away2,
+                f"eighth_home_{match2[2]}",
+                f"eighth_away_{match2[2]}",
+                f"eighth_winner_{match2[2]}"
+            )
+    
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
+# Weergave voor mobiel
+else:
 
-for row in range(0, len(eighth_matches), 2):
+    for match in eighth_matches:
 
-    match1 = eighth_matches[row]
-    match2 = eighth_matches[row + 1]
+        match_id = match[2]
 
-    col1, col2, col3, col4, col5, spacer, col6, col7, col8, col9, col10 = st.columns(
-        [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
-        vertical_alignment="center"
-    )
+        home = resolve_eighth_team(match[0])
+        away = resolve_eighth_team(match[1])
 
-    # MATCH 1
-    home1 = resolve_eighth_team(match1[0])
-    away1 = resolve_eighth_team(match1[1])
-
-    with col1:
-        st.markdown(style_country(home1), unsafe_allow_html=True)
-
-    with col2:
-        st.number_input(
-            "",
-            key=f"eighth_home_{match1[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Banner met officieel wedstrijdnummer
+        st.markdown(
+            f"""
+            <div style="
+                background: linear-gradient(90deg,#FFD36A,#FFC94D);
+                color:#002B5C;
+                font-weight:900;
+                text-align:center;
+                padding:10px;
+                border-radius:10px;
+                margin-top:12px;
+                margin-bottom:8px;
+                border:2px solid #D4AF37;
+                box-shadow:0px 3px 8px rgba(0,0,0,0.20);
+                font-size:16px;
+            ">
+                Wedstrijd {match_id}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
-    with col3:
+        # Thuisploeg
+        col_home1, col_home2 = st.columns(
+            [4, 1],
+            vertical_alignment="center"
+        )
+
+        with col_home1:
+            st.markdown(
+                style_country(home),
+                unsafe_allow_html=True
+            )
+
+        with col_home2:
+            st.number_input(
+                "",
+                key=f"eighth_home_{match_id}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+
         st.markdown(
             "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
             unsafe_allow_html=True
         )
 
-    with col4:
-        st.markdown(style_country(away1), unsafe_allow_html=True)
-
-    with col5:
-        st.number_input(
-            "",
-            key=f"eighth_away_{match1[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Uitploeg
+        col_away1, col_away2 = st.columns(
+            [4, 1],
+            vertical_alignment="center"
         )
 
-    # MATCH 2
-    home2 = resolve_eighth_team(match2[0])
-    away2 = resolve_eighth_team(match2[1])
+        with col_away1:
+            st.markdown(
+                style_country(away),
+                unsafe_allow_html=True
+            )
 
-    with col6:
-        st.markdown(style_country(home2), unsafe_allow_html=True)
+        with col_away2:
+            st.number_input(
+                "",
+                key=f"eighth_away_{match_id}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
 
-    with col7:
-        st.number_input(
-            "",
-            key=f"eighth_home_{match2[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Gelijkspel keuze
+        toon_winnaar_bij_gelijk(
+            match_id,
+            home,
+            away,
+            f"eighth_home_{match_id}",
+            f"eighth_away_{match_id}",
+            f"eighth_winner_{match_id}"
         )
 
-    with col8:
+        # Altijd dezelfde ruimte tussen wedstrijden
         st.markdown(
-            "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+            "<div style='height:12px;'></div>",
             unsafe_allow_html=True
         )
-
-    with col9:
-        st.markdown(style_country(away2), unsafe_allow_html=True)
-
-    with col10:
-        st.number_input(
-            "",
-            key=f"eighth_away_{match2[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
-        )
-
-    # GELIJKSPEL KEUZES
-    tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
-
-    with tie_col1:
-        toon_winnaar_bij_gelijk(
-            match1[2],
-            home1,
-            away1,
-            f"eighth_home_{match1[2]}",
-            f"eighth_away_{match1[2]}",
-            f"eighth_winner_{match1[2]}"
-        )
-
-    with tie_col2:
-        toon_winnaar_bij_gelijk(
-            match2[2],
-            home2,
-            away2,
-            f"eighth_home_{match2[2]}",
-            f"eighth_away_{match2[2]}",
-            f"eighth_winner_{match2[2]}"
-        )
-
-    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
 # =======================================================================================================
 # APP | KWARTFINALE
@@ -1898,144 +2003,247 @@ def resolve_quarter_team(match_id):
 # UI KWARTFINALE
 # =====================================================================================
 
-st.markdown("""
-<div style="
-    background: linear-gradient(90deg, #D62828, #F77F00);
-    padding: 14px 20px;
-    border-radius: 12px;
-    margin-top: 25px;
-    margin-bottom: 10px;
-    text-align: center;
-    box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
-">
-    <h2 style="
-        margin:0;
-        color:white;
-        font-size:26px;
-        font-weight:800;
-        letter-spacing:1px;
+# Computerweergave
+if weergave == "Computer"
+
+    st.markdown("""
+    <div style="
+        background: linear-gradient(90deg, #D62828, #F77F00);
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-top: 25px;
+        margin-bottom: 10px;
+        text-align: center;
+        box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
     ">
-        Kwartfinales
-    </h2>
-</div>
-""", unsafe_allow_html=True)
+        <h2 style="
+            margin:0;
+            color:white;
+            font-size:26px;
+            font-weight:800;
+            letter-spacing:1px;
+        ">
+            Kwartfinales
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    
+    for i in range(0, len(quarter_matches), 2):
+    
+        match1 = quarter_matches[i]
+        match2 = quarter_matches[i + 1]
+    
+        col1, col2, col3, col4, col5, spacer, col6, col7, col8, col9, col10 = st.columns(
+            [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
+            vertical_alignment="center"
+        )
+    
+        # MATCH 1
+        home1 = resolve_quarter_team(match1[0])
+        away1 = resolve_quarter_team(match1[1])
+    
+        with col1:
+            st.markdown(style_country(home1), unsafe_allow_html=True)
+    
+        with col2:
+            st.number_input(
+                "",
+                key=f"qf_home_{match1[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        with col3:
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+    
+        with col4:
+            st.markdown(style_country(away1), unsafe_allow_html=True)
+    
+        with col5:
+            st.number_input(
+                "",
+                key=f"qf_away_{match1[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        # MATCH 2
+        home2 = resolve_quarter_team(match2[0])
+        away2 = resolve_quarter_team(match2[1])
+    
+        with col6:
+            st.markdown(style_country(home2), unsafe_allow_html=True)
+    
+        with col7:
+            st.number_input(
+                "",
+                key=f"qf_home_{match2[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        with col8:
+            st.markdown(
+                "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+                unsafe_allow_html=True
+            )
+    
+        with col9:
+            st.markdown(style_country(away2), unsafe_allow_html=True)
+    
+        with col10:
+            st.number_input(
+                "",
+                key=f"qf_away_{match2[2]}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+    
+        # GELIJKSPEL KEUZES
+        tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
+    
+        with tie_col1:
+            toon_winnaar_bij_gelijk(
+                match1[2],
+                home1,
+                away1,
+                f"qf_home_{match1[2]}",
+                f"qf_away_{match1[2]}",
+                f"qf_winner_{match1[2]}"
+            )
+    
+        with tie_col2:
+            toon_winnaar_bij_gelijk(
+                match2[2],
+                home2,
+                away2,
+                f"qf_home_{match2[2]}",
+                f"qf_away_{match2[2]}",
+                f"qf_winner_{match2[2]}"
+            )
+    
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
+# Mobiele weergave
+else:
 
-for i in range(0, len(quarter_matches), 2):
+    for match in quarter_matches:
 
-    match1 = quarter_matches[i]
-    match2 = quarter_matches[i + 1]
+        match_id = match[2]
 
-    col1, col2, col3, col4, col5, spacer, col6, col7, col8, col9, col10 = st.columns(
-        [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
-        vertical_alignment="center"
-    )
+        home = resolve_quarter_team(match[0])
+        away = resolve_quarter_team(match[1])
 
-    # MATCH 1
-    home1 = resolve_quarter_team(match1[0])
-    away1 = resolve_quarter_team(match1[1])
-
-    with col1:
-        st.markdown(style_country(home1), unsafe_allow_html=True)
-
-    with col2:
-        st.number_input(
-            "",
-            key=f"qf_home_{match1[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Wedstrijdbanner
+        st.markdown(
+            f"""
+            <div style="
+                background: linear-gradient(90deg,#FFD36A,#FFC94D);
+                color:#002B5C;
+                font-weight:900;
+                text-align:center;
+                padding:10px;
+                border-radius:10px;
+                margin-top:12px;
+                margin-bottom:8px;
+                border:2px solid #D4AF37;
+                box-shadow:0px 3px 8px rgba(0,0,0,0.20);
+                font-size:16px;
+            ">
+                Wedstrijd {match_id}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
-    with col3:
+        # Thuisploeg
+        col_home1, col_home2 = st.columns(
+            [4, 1],
+            vertical_alignment="center"
+        )
+
+        with col_home1:
+            st.markdown(
+                style_country(home),
+                unsafe_allow_html=True
+            )
+
+        with col_home2:
+            st.number_input(
+                "",
+                key=f"qf_home_{match_id}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+
         st.markdown(
             "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
             unsafe_allow_html=True
         )
 
-    with col4:
-        st.markdown(style_country(away1), unsafe_allow_html=True)
-
-    with col5:
-        st.number_input(
-            "",
-            key=f"qf_away_{match1[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Uitploeg
+        col_away1, col_away2 = st.columns(
+            [4, 1],
+            vertical_alignment="center"
         )
 
-    # MATCH 2
-    home2 = resolve_quarter_team(match2[0])
-    away2 = resolve_quarter_team(match2[1])
+        with col_away1:
+            st.markdown(
+                style_country(away),
+                unsafe_allow_html=True
+            )
 
-    with col6:
-        st.markdown(style_country(home2), unsafe_allow_html=True)
+        with col_away2:
+            st.number_input(
+                "",
+                key=f"qf_away_{match_id}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
 
-    with col7:
-        st.number_input(
-            "",
-            key=f"qf_home_{match2[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
+        # Gelijkspel keuze
+        toon_winnaar_bij_gelijk(
+            match_id,
+            home,
+            away,
+            f"qf_home_{match_id}",
+            f"qf_away_{match_id}",
+            f"qf_winner_{match_id}"
         )
 
-    with col8:
+        # Gelijke afstand tussen wedstrijden
         st.markdown(
-            "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+            "<div style='height:12px;'></div>",
             unsafe_allow_html=True
         )
-
-    with col9:
-        st.markdown(style_country(away2), unsafe_allow_html=True)
-
-    with col10:
-        st.number_input(
-            "",
-            key=f"qf_away_{match2[2]}",
-            min_value=0,
-            max_value=20,
-            step=1,
-            value=None,
-            placeholder="",
-            label_visibility="collapsed"
-        )
-
-    # GELIJKSPEL KEUZES
-    tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
-
-    with tie_col1:
-        toon_winnaar_bij_gelijk(
-            match1[2],
-            home1,
-            away1,
-            f"qf_home_{match1[2]}",
-            f"qf_away_{match1[2]}",
-            f"qf_winner_{match1[2]}"
-        )
-
-    with tie_col2:
-        toon_winnaar_bij_gelijk(
-            match2[2],
-            home2,
-            away2,
-            f"qf_home_{match2[2]}",
-            f"qf_away_{match2[2]}",
-            f"qf_winner_{match2[2]}"
-        )
-
-    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-
 
 # =====================================================================================
 # RESOLVE WINNAAR UIT KWARTFINALE
@@ -2082,94 +2290,198 @@ def resolve_semi_team(match_id):
 # UI HALVE FINALE
 # =====================================================================================
 
-st.markdown("""
-<div style="
-    background: linear-gradient(90deg, #D62828, #F77F00);
-    padding: 14px 20px;
-    border-radius: 12px;
-    margin-top: 25px;
-    margin-bottom: 10px;
-    text-align: center;
-    box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
-">
-    <h2 style="margin:0; color:white; font-size:26px; font-weight:800; letter-spacing:1px;">
-        Halve finales
-    </h2>
-</div>
-""", unsafe_allow_html=True)
+# Computerweergave
+if weergave == "Computer":
 
+    st.markdown("""
+    <div style="
+        background: linear-gradient(90deg, #D62828, #F77F00);
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-top: 25px;
+        margin-bottom: 10px;
+        text-align: center;
+        box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
+    ">
+        <h2 style="margin:0; color:white; font-size:26px; font-weight:800; letter-spacing:1px;">
+            Halve finales
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    
+    for i in range(0, len(semi_matches), 2):
+    
+        match1 = semi_matches[i]
+        match2 = semi_matches[i + 1]
+    
+        col1, col2, col3, col4, col5, spacer, col6, col7, col8, col9, col10 = st.columns(
+            [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
+            vertical_alignment="center"
+        )
+    
+        home1 = resolve_semi_team(match1[0])
+        away1 = resolve_semi_team(match1[1])
+    
+        with col1:
+            st.markdown(style_country(home1), unsafe_allow_html=True)
+    
+        with col2:
+            st.number_input("", key=f"sf_home_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
+    
+        with col3:
+            st.markdown("<div style='text-align:center;color:white;font-weight:900;'>VS</div>", unsafe_allow_html=True)
+    
+        with col4:
+            st.markdown(style_country(away1), unsafe_allow_html=True)
+    
+        with col5:
+            st.number_input("", key=f"sf_away_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
+    
+        home2 = resolve_semi_team(match2[0])
+        away2 = resolve_semi_team(match2[1])
+    
+        with col6:
+            st.markdown(style_country(home2), unsafe_allow_html=True)
+    
+        with col7:
+            st.number_input("", key=f"sf_home_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
+    
+        with col8:
+            st.markdown("<div style='text-align:center;color:white;font-weight:900;'>VS</div>", unsafe_allow_html=True)
+    
+        with col9:
+            st.markdown(style_country(away2), unsafe_allow_html=True)
+    
+        with col10:
+            st.number_input("", key=f"sf_away_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
+    
+        # GELIJKSPEL KEUZES
+        tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
+    
+        with tie_col1:
+            toon_winnaar_bij_gelijk(
+                match1[2],
+                home1,
+                away1,
+                f"sf_home_{match1[2]}",
+                f"sf_away_{match1[2]}",
+                f"sf_winner_{match1[2]}"
+            )
+    
+        with tie_col2:
+            toon_winnaar_bij_gelijk(
+                match2[2],
+                home2,
+                away2,
+                f"sf_home_{match2[2]}",
+                f"sf_away_{match2[2]}",
+                f"sf_winner_{match2[2]}"
+            )
+    
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
-for i in range(0, len(semi_matches), 2):
+# Mobiele weergave 
 
-    match1 = semi_matches[i]
-    match2 = semi_matches[i + 1]
+else:
 
-    col1, col2, col3, col4, col5, spacer, col6, col7, col8, col9, col10 = st.columns(
-        [0.6, 0.4, 0.25, 0.6, 0.4, 1, 0.6, 0.4, 0.25, 0.6, 0.4],
-        vertical_alignment="center"
-    )
+    for match in semi_matches:
 
-    home1 = resolve_semi_team(match1[0])
-    away1 = resolve_semi_team(match1[1])
+        match_id = match[2]
 
-    with col1:
-        st.markdown(style_country(home1), unsafe_allow_html=True)
+        home = resolve_semi_team(match[0])
+        away = resolve_semi_team(match[1])
 
-    with col2:
-        st.number_input("", key=f"sf_home_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
-
-    with col3:
-        st.markdown("<div style='text-align:center;color:white;font-weight:900;'>VS</div>", unsafe_allow_html=True)
-
-    with col4:
-        st.markdown(style_country(away1), unsafe_allow_html=True)
-
-    with col5:
-        st.number_input("", key=f"sf_away_{match1[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
-
-    home2 = resolve_semi_team(match2[0])
-    away2 = resolve_semi_team(match2[1])
-
-    with col6:
-        st.markdown(style_country(home2), unsafe_allow_html=True)
-
-    with col7:
-        st.number_input("", key=f"sf_home_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
-
-    with col8:
-        st.markdown("<div style='text-align:center;color:white;font-weight:900;'>VS</div>", unsafe_allow_html=True)
-
-    with col9:
-        st.markdown(style_country(away2), unsafe_allow_html=True)
-
-    with col10:
-        st.number_input("", key=f"sf_away_{match2[2]}", min_value=0, max_value=20, step=1, value=None, placeholder="", label_visibility="collapsed")
-
-    # GELIJKSPEL KEUZES
-    tie_col1, tie_spacer, tie_col2 = st.columns([5.3, 1, 5.3])
-
-    with tie_col1:
-        toon_winnaar_bij_gelijk(
-            match1[2],
-            home1,
-            away1,
-            f"sf_home_{match1[2]}",
-            f"sf_away_{match1[2]}",
-            f"sf_winner_{match1[2]}"
+        # Wedstrijdbanner
+        st.markdown(
+            f"""
+            <div style="
+                background: linear-gradient(90deg,#FFD36A,#FFC94D);
+                color:#002B5C;
+                font-weight:900;
+                text-align:center;
+                padding:10px;
+                border-radius:10px;
+                margin-top:12px;
+                margin-bottom:8px;
+                border:2px solid #D4AF37;
+                box-shadow:0px 3px 8px rgba(0,0,0,0.20);
+                font-size:16px;
+            ">
+                Wedstrijd {match_id}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
-    with tie_col2:
-        toon_winnaar_bij_gelijk(
-            match2[2],
-            home2,
-            away2,
-            f"sf_home_{match2[2]}",
-            f"sf_away_{match2[2]}",
-            f"sf_winner_{match2[2]}"
+        # Thuisploeg
+        col_home1, col_home2 = st.columns(
+            [4, 1],
+            vertical_alignment="center"
         )
 
-    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+        with col_home1:
+            st.markdown(
+                style_country(home),
+                unsafe_allow_html=True
+            )
 
+        with col_home2:
+            st.number_input(
+                "",
+                key=f"sf_home_{match_id}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+
+        st.markdown(
+            "<div style='text-align:center;color:white;font-weight:900;'>VS</div>",
+            unsafe_allow_html=True
+        )
+
+        # Uitploeg
+        col_away1, col_away2 = st.columns(
+            [4, 1],
+            vertical_alignment="center"
+        )
+
+        with col_away1:
+            st.markdown(
+                style_country(away),
+                unsafe_allow_html=True
+            )
+
+        with col_away2:
+            st.number_input(
+                "",
+                key=f"sf_away_{match_id}",
+                min_value=0,
+                max_value=20,
+                step=1,
+                value=None,
+                placeholder="",
+                label_visibility="collapsed"
+            )
+
+        # Gelijkspel keuze
+        toon_winnaar_bij_gelijk(
+            match_id,
+            home,
+            away,
+            f"sf_home_{match_id}",
+            f"sf_away_{match_id}",
+            f"sf_winner_{match_id}"
+        )
+
+        # Gelijke afstand tussen wedstrijden
+        st.markdown(
+            "<div style='height:12px;'></div>",
+            unsafe_allow_html=True
+        )
 
 # =====================================================================================
 # RESOLVE WINNAAR UIT HALVE FINALE
