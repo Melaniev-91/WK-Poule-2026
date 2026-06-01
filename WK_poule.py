@@ -1716,10 +1716,7 @@ def resolve_eighth_team(value):
 # 8e FINALE UI
 # =====================================================================================
 
-# Computerweergave
-if weergave == "Computer":
-
-    st.markdown("""
+st.markdown("""
     <div style="
         background: linear-gradient(90deg, #D62828, #F77F00);
         padding: 14px 20px;
@@ -1740,7 +1737,9 @@ if weergave == "Computer":
         </h2>
     </div>
     """, unsafe_allow_html=True)
-    
+
+# Computerweergave
+if weergave == "Computer":
     
     for row in range(0, len(eighth_matches), 2):
     
@@ -2003,10 +2002,7 @@ def resolve_quarter_team(match_id):
 # UI KWARTFINALE
 # =====================================================================================
 
-# Computerweergave
-if weergave == "Computer":
-
-    st.markdown("""
+st.markdown("""
     <div style="
         background: linear-gradient(90deg, #D62828, #F77F00);
         padding: 14px 20px;
@@ -2027,7 +2023,9 @@ if weergave == "Computer":
         </h2>
     </div>
     """, unsafe_allow_html=True)
-    
+
+# Computerweergave
+if weergave == "Computer":
     
     for i in range(0, len(quarter_matches), 2):
     
@@ -2290,10 +2288,7 @@ def resolve_semi_team(match_id):
 # UI HALVE FINALE
 # =====================================================================================
 
-# Computerweergave
-if weergave == "Computer":
-
-    st.markdown("""
+st.markdown("""
     <div style="
         background: linear-gradient(90deg, #D62828, #F77F00);
         padding: 14px 20px;
@@ -2308,6 +2303,11 @@ if weergave == "Computer":
         </h2>
     </div>
     """, unsafe_allow_html=True)
+
+# Computerweergave
+if weergave == "Computer":
+
+   
     
     
     for i in range(0, len(semi_matches), 2):
