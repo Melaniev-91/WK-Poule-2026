@@ -353,12 +353,24 @@ def style_country(team):
 # FIREBASE | WEDSTRIJDEN DATA (POULEFASE) OPHALEN UIT FIRESTORE (FIREBASE)
 # =======================================================================================================
 
-wedstrijden = db.collection("Wedstrijden").stream()
+@st.cache_data(ttl=3600)
+def laad_wedstrijden():
+
+    wedstrijden = db.collection("Wedstrijden").stream()
+
+    data = []
+
+    for w in wedstrijden:
+        data.append(w.to_dict())
+
+    return data
+
+
+wedstrijden = laad_wedstrijden()
 
 poules = {}
 
-for w in wedstrijden:
-    data = w.to_dict()
+for data in wedstrijden:
 
     poule = data.get("Poule")
     fase = data.get("Fase")
@@ -371,12 +383,12 @@ for w in wedstrijden:
 
     poules[poule].append(data)
 
-    # sorteren op ronde
-    for poule in poules:
-        poules[poule] = sorted(
-            poules[poule],
-            key=lambda x: x["Ronde"]
-        )
+# sorteren op ronde
+for poule in poules:
+    poules[poule] = sorted(
+        poules[poule],
+        key=lambda x: x["Ronde"]
+    )
 
 # =======================================================================================================
 # APP | POULEFASE
