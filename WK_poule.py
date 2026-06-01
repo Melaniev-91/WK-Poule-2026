@@ -740,7 +740,7 @@ else:
         st.markdown(
             f"""
             <div style="
-                background: linear-gradient(90deg,#002B5C,#004B8D);
+                background: linear-gradient(90deg,#FFD36A,#FFC94D);
                 padding:10px;
                 border-radius:10px;
                 text-align:center;
@@ -749,7 +749,7 @@ else:
                 border:1px solid #D4AF37;
             ">
                 <span style="
-                    color:white;
+                    color:#002B5C;
                     font-size:18px;
                     font-weight:800;
                 ">
@@ -781,8 +781,8 @@ else:
                 st.markdown(
                     f"""
                     <div style="
-                        background: linear-gradient(90deg,#FFD36A,#FFC94D);
-                        color:#002B5C;
+                      background: linear-gradient(90deg,#002B5C,#004B8D);
+    	                color:white;
                         font-weight:900;
                         text-align:center;
                         padding:10px;
@@ -822,14 +822,14 @@ else:
             st.markdown(
                 f"""
                 <div style="
-                    background: linear-gradient(90deg,#002B5C,#004B8D);
+                    background: linear-gradient(90deg,#2D73C9,#4E95EB);
                     color:white;
                     font-weight:800;
                     text-align:center;
                     padding:8px;
                     border-radius:8px;
                     margin-bottom:8px;
-                    border:1px solid #D4AF37;
+                    border:2px solid #D4AF37;
                     font-size:14px;
                 ">
                     Wedstrijd {wedstrijd_teller}
