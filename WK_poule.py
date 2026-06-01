@@ -1660,6 +1660,7 @@ else:
             "<div style='height:12px;'></div>",
             unsafe_allow_html=True
         )
+        
 # =======================================================================================================
 # APP | 8e FINALE
 # =======================================================================================================
@@ -1718,7 +1719,6 @@ def resolve_eighth_team(value):
 # Computerweergave
 if weergave == "Computer":
 
-        # HUIDIGE 8E FINALE CODE
     st.markdown("""
     <div style="
         background: linear-gradient(90deg, #D62828, #F77F00);
@@ -2004,7 +2004,7 @@ def resolve_quarter_team(match_id):
 # =====================================================================================
 
 # Computerweergave
-if weergave == "Computer"
+if weergave == "Computer":
 
     st.markdown("""
     <div style="
