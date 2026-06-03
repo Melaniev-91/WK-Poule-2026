@@ -2923,7 +2923,7 @@ def maak_pool_pdf(user, voorspellingen_pdf):
 
     # Titel
     p.setFont("Helvetica-Bold", 18)
-    p.drawString(margin, y, f"WK Poule 2026 - {user}")
+    p.drawString(margin, y, f"WK Pool 2026 - {user}")
     y -= 35
 
     # =================================================================================
