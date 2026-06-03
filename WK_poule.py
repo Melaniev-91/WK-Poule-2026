@@ -114,7 +114,7 @@ st.markdown("""
 </style>
 
 <div class="fifa-banner">
-    <h1>🏆 WK Poule 2026</h1>
+    <h1>🏆 WK Pool 2026</h1>
 </div>
 """, unsafe_allow_html=True)
 
