@@ -3486,6 +3486,19 @@ if st.button("Klaar en verzenden naar organisatie", key="save_all"):
 
         update_voortgang("Bonusvragen worden opgeslagen...")
 
+        # =========================================================================
+        # DEELNEMER REGISTREREN
+        # =========================================================================
+        
+        deelnemer_doc_id = normalize_text(user).replace(" ", "_")
+        
+        db.collection("Deelnemers").document(
+            deelnemer_doc_id
+        ).set({
+            "Deelnemer": user,
+            "ingediend_op": firestore.SERVER_TIMESTAMP
+        })
+        
         voortgang_balk.progress(1.0)
         voortgang_tekst.markdown(
             """
