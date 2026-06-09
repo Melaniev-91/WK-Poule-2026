@@ -2689,7 +2689,7 @@ st.markdown(
 gele_kaarten = st.number_input(
     "",
     min_value=0,
-    max_value=500,
+    max_value=1000,
     step=1,
     value=None,
     placeholder="Aantal gele kaarten",
